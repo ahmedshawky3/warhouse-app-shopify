@@ -2,7 +2,7 @@
 
 client_id = "5933c2e4517c47713d3c7c90a7589721"
 name = "warhouse app testing"
-application_url = "https://municipality-andreas-snap-renewal.trycloudflare.com"
+application_url = "https://urw-airport-identify-script.trycloudflare.com"
 embedded = true
 handle = "warhouse-app-testing"
 
@@ -18,7 +18,7 @@ api_version = "2025-07"
 scopes = "write_products,read_products,read_orders,write_orders,read_customers,write_customers"
 
 [auth]
-redirect_urls = ["https://municipality-andreas-snap-renewal.trycloudflare.com/auth/callback", "https://municipality-andreas-snap-renewal.trycloudflare.com/auth/shopify/callback", "https://municipality-andreas-snap-renewal.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://urw-airport-identify-script.trycloudflare.com/auth/callback", "https://urw-airport-identify-script.trycloudflare.com/auth/shopify/callback", "https://urw-airport-identify-script.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false

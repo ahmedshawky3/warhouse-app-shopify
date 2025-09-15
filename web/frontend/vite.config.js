@@ -58,6 +58,8 @@ export default defineConfig({
       "^/(\\?.*)?$": proxyOptions,
       "^/api(/|(\\?.*)?$)": proxyOptions,
     },
+    // Ensure proper fallback for SPA routing
+    historyApiFallback: true,
   },
   build: {
     sourcemap: true,

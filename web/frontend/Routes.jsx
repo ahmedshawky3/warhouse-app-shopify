@@ -1,4 +1,4 @@
-import { Routes as ReactRouterRoutes, Route } from "react-router-dom";
+ import { Routes as ReactRouterRoutes, Route, Navigate } from "react-router-dom";
 
 /**
  * File-based routing.
@@ -15,22 +15,35 @@ import { Routes as ReactRouterRoutes, Route } from "react-router-dom";
  * @return {Routes} `<Routes/>` from React Router, with a `<Route/>` for each file in `pages`
  */
 export default function Routes({ pages }) {
-  const routes = useRoutes(pages);
-  const routeComponents = routes.map(({ path, component: Component }) => (
-    <Route key={path} path={path} element={<Component />} />
+  const routes = generateRoutes(pages);
+  
+  console.log("Rendering routes:", routes);
+  
+  const routeComponents = routes.map(({ path, component: Component }) => {
+    console.log(`Creating route component for path: ${path}`);
+    return (
+      <Route key={path} path={path} element={<Component />} />
+    );
+  });
+
+  const NotFound = routes.find(({ path }) => path === "/notFound")?.component || (() => (
+    <div>Page not found</div>
   ));
 
-  const NotFound = routes.find(({ path }) => path === "/notFound").component;
+  console.log("Route components:", routeComponents.length);
+  console.log("NotFound component:", !!NotFound);
 
   return (
-    <ReactRouterRoutes>
+    <ReactRouterRoutes future={{ v7_startTransition: true }}>
       {routeComponents}
+      <Route path="/exitiframe" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFound />} />
     </ReactRouterRoutes>
   );
 }
 
-function useRoutes(pages) {
+function generateRoutes(pages) {
+  console.log("Pages object:", pages);
   const routes = Object.keys(pages)
     .map((key) => {
       let path = key
@@ -46,24 +59,46 @@ function useRoutes(pages) {
          */
         .replace(/\b[A-Z]/, (firstLetter) => firstLetter.toLowerCase())
         /**
-         * Convert /[handle].jsx and /[...handle].jsx to /:handle.jsx for react-router-dom
+         * Convert /[handle].jsx to /:handle.jsx for react-router-dom
          */
-        .replace(/\[(?:[.]{3})?(\w+?)\]/g, (_match, param) => `:${param}`);
+        .replace(/\[(\w+?)\]/g, (_match, param) => `:${param}`);
+
+      // Debug the path transformation
+      console.log(`Path transformation: ${key} -> ${path}`);
 
       if (path.endsWith("/") && path !== "/") {
         path = path.substring(0, path.length - 1);
       }
 
-      if (!pages[key].default) {
-        console.warn(`${key} doesn't export a default React component`);
+      // Ensure root path is properly handled
+      if (path === "") {
+        path = "/";
       }
+
+      const module = pages[key];
+      const component = module?.default;
+      const hasComponent = !!component;
+
+      if (!hasComponent) {
+        console.warn(`${key} doesn't export a default React component`, {
+          module,
+          keys: Object.keys(module || {}),
+          default: module?.default,
+          type: typeof module?.default
+        });
+      }
+
+      console.log(`Generated route: ${path} from ${key}, hasComponent: ${hasComponent}`);
 
       return {
         path,
-        component: pages[key].default,
+        component,
+        hasComponent,
       };
     })
-    .filter((route) => route.component);
+    .filter((route) => route.hasComponent)
+    .map(({ path, component }) => ({ path, component }));
 
+  console.log("Final routes:", routes);
   return routes;
 }
