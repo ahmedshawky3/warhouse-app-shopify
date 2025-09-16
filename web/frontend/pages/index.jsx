@@ -40,11 +40,13 @@ export default function ProductSender() {
   const [sendResults, setSendResults] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [sendMode, setSendMode] = useState("all"); // "all" or "selected"
-  const [endpointUrl, setEndpointUrl] = useState("https://95330e7d4198.ngrok-free.app/api/send-products");
+  const [endpointUrl, setEndpointUrl] = useState("https://2a776cf42407.ngrok-free.app/api/send-products");
   const [showEndpointModal, setShowEndpointModal] = useState(false);
+  const [skuLoading, setSkuLoading] = useState(false);
+  const [skuData, setSkuData] = useState(null);
 
-  // Get Shopify products
-  const { data: shopifyProducts, isLoading: productsLoading } = useQuery({
+  // Get Shopify variants (API now returns variants directly)
+  const { data: shopifyData, isLoading: productsLoading } = useQuery({
     queryKey: ["shopify-products"],
     queryFn: async () => {
       const response = await fetch("/api/products");
@@ -52,6 +54,9 @@ export default function ProductSender() {
     },
     refetchOnWindowFocus: false,
   });
+
+  // The API now returns variants directly under the 'products' key
+  const shopifyVariants = shopifyData?.products || [];
 
   // Send products mutation
   const sendProductsMutation = useMutation({
@@ -63,7 +68,15 @@ export default function ProductSender() {
         },
         body: JSON.stringify({ endpoint, sendMode, selectedProductIds }),
       });
-      return await response.json();
+      
+      // Handle non-JSON responses
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Server error: ${response.status} ${response.statusText} - ${text}`);
+      }
     },
     onSuccess: (data) => {
       setSendResults(data);
@@ -119,12 +132,12 @@ export default function ProductSender() {
   }, []);
 
   const handleSelectAll = useCallback(() => {
-    if (selectedProducts.length === shopifyProducts?.products?.length) {
+    if (selectedProducts.length === shopifyVariants?.length) {
       setSelectedProducts([]);
     } else {
-      setSelectedProducts(shopifyProducts?.products?.map(p => p.id) || []);
+      setSelectedProducts(shopifyVariants?.map(v => v.id) || []);
     }
-  }, [selectedProducts.length, shopifyProducts?.products]);
+  }, [selectedProducts.length, shopifyVariants]);
 
   const handleEndpointSubmit = useCallback(() => {
     if (endpointUrl.trim()) {
@@ -132,38 +145,59 @@ export default function ProductSender() {
     }
   }, [endpointUrl]);
 
-  const allSelected = selectedProducts.length === shopifyProducts?.products?.length && shopifyProducts?.products?.length > 0;
-  const someSelected = selectedProducts.length > 0 && selectedProducts.length < shopifyProducts?.products?.length;
+  const handleFetchSkus = useCallback(async () => {
+    setSkuLoading(true);
+    try {
+      const response = await fetch('/api/skus/quantities');
+      const data = await response.json();
+      
+      if (data.success) {
+        setSkuData(data);
+        console.log('SKU data fetched:', data);
+      } else {
+        console.error('Failed to fetch SKU data:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching SKU data:', error);
+    } finally {
+      setSkuLoading(false);
+    }
+  }, []);
 
-  const productRows = shopifyProducts?.products?.map((product) => [
+  const allSelected = selectedProducts.length === shopifyVariants?.length && shopifyVariants?.length > 0;
+  const someSelected = selectedProducts.length > 0 && selectedProducts.length < shopifyVariants?.length;
+
+  const variantRows = shopifyVariants?.map((variant) => [
     <Checkbox
-      checked={selectedProducts.includes(product.id)}
-      onChange={(checked) => handleProductSelection(product.id, checked)}
+      checked={selectedProducts.includes(variant.id)}
+      onChange={(checked) => handleProductSelection(variant.id, checked)}
     />,
     <ResourceItem
-      id={product.id}
+      id={variant.id}
       url="#"
       media={
         <Thumbnail
-          source={product.image?.src || "https://via.placeholder.com/50"}
-          alt={product.title}
+          source={variant.productImage?.url || "https://via.placeholder.com/50"}
+          alt={variant.productTitle}
         />
       }
     >
       <Text variant="bodyMd" fontWeight="bold" as="h3">
-        {product.title}
+        {variant.productTitle} - {variant.title}
       </Text>
-      <div>{product.vendor}</div>
+      <Text variant="bodySm" color="subdued">
+        SKU: {variant.sku || 'No SKU'} | Vendor: {variant.productVendor}
+      </Text>
     </ResourceItem>,
-    product.variants?.length || 0,
-    `$${product.variants?.[0]?.price || "0.00"}`,
-    <Badge status={product.status === "active" ? "success" : "warning"}>
-      {product.status}
+    variant.inventoryQuantity || 0,
+    `$${variant.price || "0.00"}`,
+    <Badge status={variant.productStatus === "active" ? "success" : "warning"}>
+      {variant.productStatus}
     </Badge>,
   ]) || [];
 
   return (
-    <Page narrowWidth>
+    <Page fullWidth>
       <TitleBar title="Send Products" />
       <Layout>
         {/* Header */}
@@ -173,12 +207,19 @@ export default function ProductSender() {
               <div>
                 <DisplayText size="medium">Shopify to Odoo Sync</DisplayText>
                 <Text variant="bodyMd" color="subdued">
-                  Sync your Shopify products to Odoo warehouse management
+                  Sync your Shopify product variants to Odoo warehouse management
                 </Text>
               </div>
               <ButtonGroup>
                 <Button onClick={() => setShowEndpointModal(true)}>
                   Configure Endpoint
+                </Button>
+                <Button 
+                  onClick={handleFetchSkus} 
+                  loading={skuLoading}
+                  primary
+                >
+                  {skuLoading ? 'Fetching SKUs...' : 'Fetch SKU Quantities'}
                 </Button>
               </ButtonGroup>
             </VerticalStack>
@@ -193,24 +234,66 @@ export default function ProductSender() {
           >
             <Text variant="bodyMd">
               {endpointUrl 
-                ? `Products will be synced to Odoo via: ${endpointUrl}`
+                ? `Variants will be synced to Odoo via: ${endpointUrl}`
                 : "Please configure an Odoo sync endpoint URL."
               }
             </Text>
           </Banner>
         </Layout.Section>
 
-        {/* Product Count */}
+        {/* SKU Data Display */}
+        {skuData && (
+          <Layout.Section>
+            <LegacyCard sectioned>
+              <VerticalStack gap="4">
+                <Text variant="headingMd">SKU Quantities Data</Text>
+                <Banner status="success" title={skuData.message}>
+                  <Text variant="bodyMd">
+                    Retrieved data for {skuData.data.length} companies
+                  </Text>
+                </Banner>
+                
+                {skuData.data.map((company, index) => (
+                  <LegacyCard key={index} sectioned>
+                    <VerticalStack gap="2">
+                      <Text variant="headingSm">
+                        🏢 {company.company_name}
+                      </Text>
+                      <Text variant="bodyMd" color="subdued">
+                        🌐 {company.company_website}
+                      </Text>
+                      <Text variant="bodyMd">
+                        📦 Total SKUs: {company.total_skus} | 
+                        📊 Total Quantity: {company.total_quantity}
+                      </Text>
+                      
+                      <div style={{ marginTop: '8px' }}>
+                        <Text variant="bodySm" fontWeight="bold">SKUs:</Text>
+                        {company.skus.map((sku, skuIndex) => (
+                          <Text key={skuIndex} variant="bodySm">
+                            • {sku.sku}: {sku.quantity_on_hand} units
+                          </Text>
+                        ))}
+                      </div>
+                    </VerticalStack>
+                  </LegacyCard>
+                ))}
+              </VerticalStack>
+            </LegacyCard>
+          </Layout.Section>
+        )}
+
+        {/* Variant Count */}
         <Layout.Section>
           <Layout>
             <Layout.Section oneThird>
               <LegacyCard sectioned>
                 <TextContainer>
                   <Text variant="headingMd" as="h3">
-                    Total Products
+                    Total Variants
                   </Text>
                   <Text variant="heading2xl" as="p">
-                    {shopifyProducts?.products?.length || 0}
+                    {shopifyVariants?.length || 0}
                   </Text>
                   <Text variant="bodyMd" color="subdued">
                     Available in your store
@@ -222,7 +305,7 @@ export default function ProductSender() {
               <LegacyCard sectioned>
                 <TextContainer>
                   <Text variant="headingMd" as="h3">
-                    Selected Products
+                    Selected Variants
                   </Text>
                   <Text variant="heading2xl" as="p">
                     {selectedProducts.length}
@@ -253,12 +336,12 @@ export default function ProductSender() {
 
         {/* Send Actions */}
         <Layout.Section>
-          <LegacyCard title="Send Products" sectioned>
+          <LegacyCard title="Send Variants" sectioned>
             <VerticalStack gap="4">
               <div>
                 <Subheading>Choose what to sync</Subheading>
                 <Text variant="bodyMd">
-                  Sync all products or select specific ones to sync to Odoo warehouse management.
+                  Sync all variants or select specific ones to sync to Odoo warehouse management.
                 </Text>
               </div>
               
@@ -267,22 +350,22 @@ export default function ProductSender() {
                   primary 
                   size="large"
                   onClick={handleSendAll}
-                  disabled={!endpointUrl || sendInProgress || !shopifyProducts?.products?.length}
+                  disabled={!endpointUrl || sendInProgress || !shopifyVariants?.length}
                 >
-                  {sendInProgress ? "Syncing..." : "Sync All Products to Odoo"}
+                  {sendInProgress ? "Syncing..." : "Sync All Variants to Odoo"}
                 </Button>
                 <Button 
                   size="large"
                   onClick={handleSendSelected}
                   disabled={!endpointUrl || sendInProgress || selectedProducts.length === 0}
                 >
-                  Sync Selected Products to Odoo ({selectedProducts.length})
+                  Sync Selected Variants to Odoo ({selectedProducts.length})
                 </Button>
               </VerticalStack>
 
               {sendInProgress && (
                 <div>
-                  <Text variant="bodyMd">Syncing products to Odoo...</Text>
+                  <Text variant="bodyMd">Syncing variants to Odoo...</Text>
                   <ProgressBar progress={75} />
                 </div>
               )}
@@ -290,33 +373,33 @@ export default function ProductSender() {
           </LegacyCard>
         </Layout.Section>
 
-        {/* Product List */}
+        {/* Variant List */}
         <Layout.Section>
-          <LegacyCard title="Products" sectioned>
+          <LegacyCard title="Variants" sectioned>
             {productsLoading ? (
               <div style={{ textAlign: 'center', padding: '2rem' }}>
-                <Spinner accessibilityLabel="Loading products" size="large" />
+                <Spinner accessibilityLabel="Loading variants" size="large" />
                 </div>
-            ) : shopifyProducts?.products?.length > 0 ? (
+            ) : shopifyVariants?.length > 0 ? (
               <VerticalStack gap="4">
                 <Stack distribution="equalSpacing" alignment="center">
-                  <Text variant="headingMd">Select Products</Text>
+                  <Text variant="headingMd">Select Variants</Text>
                   <Button onClick={handleSelectAll}>
                     {allSelected ? "Deselect All" : "Select All"}
                   </Button>
             </Stack>
                 <DataTable
                   columnContentTypes={["text", "text", "numeric", "text", "text"]}
-                  headings={["Select", "Product", "Variants", "Price", "Status"]}
-                  rows={productRows}
+                  headings={["Select", "Product/Variant", "Stock", "Price", "Status"]}
+                  rows={variantRows}
                 />
               </VerticalStack>
             ) : (
               <EmptyState
-                heading="No products found"
+                heading="No variants found"
                 image="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
               >
-                <p>No products are available in your store.</p>
+                <p>No variants are available in your store.</p>
               </EmptyState>
             )}
           </LegacyCard>
@@ -329,7 +412,7 @@ export default function ProductSender() {
               <VerticalStack gap="4">
                 <div>
                   <Text variant="bodyMd">
-                    <strong>Products Sent:</strong> {sendResults.results?.sent || 0}
+                    <strong>Variants Sent:</strong> {sendResults.results?.sent || 0}
                   </Text>
                 </div>
                 <div>
@@ -392,36 +475,36 @@ export default function ProductSender() {
         </Modal>
 
       {/* Send Confirmation Modal */}
-      <Modal
-        open={sendModalActive}
-        onClose={handleCancelSend}
-        title="Confirm Sync to Odoo"
-        primaryAction={{
-          content: "Sync to Odoo",
-          onAction: handleConfirmSend,
-          loading: sendInProgress,
-        }}
-        secondaryActions={[
-          {
-            content: "Cancel",
-            onAction: handleCancelSend,
-          },
-        ]}
-      >
-        <Modal.Section>
-          <Text variant="bodyMd">
-            {sendMode === "all" 
-              ? `This will sync all ${shopifyProducts?.products?.length || 0} products to Odoo.`
-              : `This will sync ${selectedProducts.length} selected products to Odoo.`
-            }
-          </Text>
-          <div style={{ marginTop: "16px" }}>
+        <Modal
+          open={sendModalActive}
+          onClose={handleCancelSend}
+          title="Confirm Sync to Odoo"
+          primaryAction={{
+            content: "Sync to Odoo",
+            onAction: handleConfirmSend,
+            loading: sendInProgress,
+          }}
+          secondaryActions={[
+            {
+              content: "Cancel",
+              onAction: handleCancelSend,
+            },
+          ]}
+        >
+          <Modal.Section>
             <Text variant="bodyMd">
-              <strong>Odoo Sync Endpoint:</strong> {endpointUrl}
+              {sendMode === "all" 
+                ? `This will sync all ${shopifyVariants?.length || 0} variants to Odoo.`
+                : `This will sync ${selectedProducts.length} selected variants to Odoo.`
+              }
             </Text>
-          </div>
-        </Modal.Section>
-      </Modal>
+            <div style={{ marginTop: "16px" }}>
+              <Text variant="bodyMd">
+                <strong>Odoo Sync Endpoint:</strong> {endpointUrl}
+              </Text>
+            </div>
+          </Modal.Section>
+        </Modal>
     </Page>
   );
 }

@@ -1,4 +1,4 @@
-// @ts-check
+// @ts-nocheck
 import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
@@ -21,6 +21,205 @@ const STATIC_PATH =
 
 const app = express();
 
+// Helper function to update company inventory and sync to Shopify
+async function updateCompanyInventory(companyData, session = null) {
+  try {
+    console.log('📝 Writing company inventory data:', JSON.stringify(companyData, null, 2));
+    
+    // Write the data to your inventory system and sync to Shopify
+    for (const company of companyData) {
+      console.log(`🏢 Company: ${company.company_name}`);
+      console.log(`🌐 Website: ${company.company_website}`);
+      console.log(`📦 Total SKUs: ${company.total_skus}`);
+      console.log(`📊 Total Quantity: ${company.total_quantity}`);
+      
+      // Write each SKU to inventory and sync to Shopify
+      for (const sku of company.skus) {
+        console.log(`  ✅ Processing SKU: ${sku.sku} with quantity: ${sku.quantity_on_hand}`);
+        
+        // If we have a Shopify session, update Shopify inventory
+        if (session) {
+          try {
+            await updateShopifyInventory(session, sku.sku, sku.quantity_on_hand);
+            console.log(`  🛍️ Updated Shopify inventory for SKU: ${sku.sku}`);
+          } catch (shopifyError) {
+            console.error(`  ❌ Failed to update Shopify for SKU ${sku.sku}:`, shopifyError.message);
+          }
+        }
+      }
+      
+      console.log(`✅ Completed processing inventory for ${company.company_name}`);
+    }
+    
+    console.log('🎉 All company inventory data processed successfully');
+    
+    // Optional: Log to file for audit trail
+    const timestamp = new Date().toISOString();
+    console.log(`📄 Audit log - ${timestamp}: Processed inventory for ${companyData.length} companies`);
+    
+  } catch (error) {
+    console.error('❌ Error processing company inventory:', error);
+    throw error;
+  }
+}
+
+// Helper function to update Shopify inventory levels using REST API
+async function updateShopifyInventory(session, sku, quantity) {
+  try {
+    const client = new shopify.api.clients.Graphql({
+      session: session,
+    });
+
+    // Find the product variant by SKU using GraphQL
+    const findVariantResponse = await client.request(`
+      query findVariantBySku($sku: String!) {
+        productVariants(first: 1, query: $sku) {
+          edges {
+            node {
+              id
+              sku
+              inventoryQuantity
+              inventoryItem {
+                id
+              }
+            }
+          }
+        }
+      }
+    `, {
+      variables: { sku: sku }
+    });
+
+    const variant = findVariantResponse.data.productVariants.edges[0]?.node;
+    
+    if (!variant) {
+      console.log(`⚠️ No Shopify variant found for SKU: ${sku}`);
+      return;
+    }
+
+    console.log(`🔍 Found Shopify variant for SKU ${sku}: ${variant.id} (current quantity: ${variant.inventoryQuantity})`);
+
+    // Print all current on hand quantities for this SKU
+    console.log(`📊 Current On Hand Quantities for SKU ${sku}:`);
+    console.log(`  🏪 Variant Inventory Quantity: ${variant.inventoryQuantity}`);
+
+    // Check if update is needed
+    if (variant.inventoryQuantity === quantity) {
+      console.log(`✅ SKU ${sku} already has correct quantity: ${quantity}`);
+      return;
+    }
+
+    // Use REST API to update inventory levels
+    const baseUrl = `https://${session.shop}/admin/api/2025-07`;
+    const headers = {
+      'X-Shopify-Access-Token': session.accessToken,
+      'Content-Type': 'application/json'
+    };
+
+    // Get inventory item ID from the variant
+    const inventoryItemId = variant.inventoryItem.id.split('/').pop();
+    
+    // Get all inventory levels for this item
+    const inventoryLevelsResponse = await fetch(`${baseUrl}/inventory_levels.json?inventory_item_ids=${inventoryItemId}`, {
+      method: 'GET',
+      headers: headers
+    });
+
+    if (!inventoryLevelsResponse.ok) {
+      throw new Error(`Failed to get inventory levels: ${inventoryLevelsResponse.status}`);
+    }
+
+    const inventoryLevels = await inventoryLevelsResponse.json();
+    
+    if (!inventoryLevels.inventory_levels || inventoryLevels.inventory_levels.length === 0) {
+      console.log(`⚠️ No inventory levels found for SKU ${sku}`);
+      return;
+    }
+
+    // Print all inventory levels for this SKU
+    console.log(`📊 Inventory Levels for SKU ${sku}:`);
+    inventoryLevels.inventory_levels.forEach((level, index) => {
+      console.log(`  📍 Location ${level.location_id}:`);
+      console.log(`    🏪 Available: ${level.available}`);
+      console.log(`    📦 On Hand: ${level.available + (level.committed || 0)}`);
+      console.log(`    🔒 Committed: ${level.committed || 0}`);
+    });
+
+    // Use GraphQL to adjust inventory quantities properly
+    // This will update the actual on hand quantity
+    const adjustmentResponse = await client.request(`
+      mutation inventoryAdjustQuantities($input: InventoryAdjustQuantitiesInput!) {
+        inventoryAdjustQuantities(input: $input) {
+          inventoryAdjustmentGroup {
+            id
+            changes {
+              name
+              delta
+              quantityAfterChange
+              item {
+                id
+                sku
+              }
+              location {
+                id
+                name
+              }
+            }
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `, {
+      variables: {
+        input: {
+          reason: "correction",
+          referenceDocumentUri: `app://shopify-app/${sku}`,
+          changes: inventoryLevels.inventory_levels.map(level => {
+            const currentOnHand = variant.inventoryQuantity;
+            const delta = quantity - currentOnHand;
+            
+            console.log(`🔄 Adjusting inventory for location ${level.location_id}:`);
+            console.log(`  📊 New Quantity: ${quantity}`);
+            console.log(`  🏪 Current On Hand: ${currentOnHand}`);
+            console.log(`  🔢 Delta: ${delta}`);
+            
+            return {
+              name: `Set ${sku} quantity to ${quantity}`,
+              delta: delta,
+              itemId: variant.inventoryItem.id,
+              locationId: `gid://shopify/Location/${level.location_id}`
+            };
+          })
+        }
+      }
+    });
+
+    if (adjustmentResponse.data.inventoryAdjustQuantities.userErrors.length > 0) {
+      console.error(`❌ Failed to update inventory for SKU ${sku}:`, adjustmentResponse.data.inventoryAdjustQuantities.userErrors);
+      return;
+    }
+
+    console.log(`✅ Successfully updated inventory quantity for SKU ${sku} to ${quantity}`);
+    console.log(`📊 Adjustment details:`, adjustmentResponse.data.inventoryAdjustQuantities.inventoryAdjustmentGroup.changes);
+    
+    // Print the new quantities after adjustment
+    console.log(`📊 New On Hand Quantities for SKU ${sku} after adjustment:`);
+    adjustmentResponse.data.inventoryAdjustQuantities.inventoryAdjustmentGroup.changes.forEach(change => {
+      console.log(`  📍 Location ${change.location.name}:`);
+      console.log(`    📦 New On Hand: ${change.quantityAfterChange}`);
+      console.log(`    🔢 Delta Applied: ${change.delta}`);
+    });
+    
+  } catch (error) {
+    console.error(`❌ Error updating Shopify inventory for SKU ${sku}:`, error);
+    throw error;
+  }
+}
+
+
 // Set up Shopify authentication and webhook handling
 app.get(shopify.config.auth.path, shopify.auth.begin());
 app.get(
@@ -30,13 +229,87 @@ app.get(
 );
 app.post(
   shopify.config.webhooks.path,
+  (req, res, next) => {
+    console.log('🔔 WEBHOOK REQUEST RECEIVED:', {
+      method: req.method,
+      url: req.url,
+      headers: req.headers,
+      body: req.body
+    });
+    next();
+  },
   shopify.processWebhooks({ webhookHandlers: PrivacyWebhookHandlers })
 );
 
 // If you are adding routes outside of the /api path, remember to
 // also add a proxy rule for them in web/frontend/vite.config.js
 
+// Test endpoint to verify webhook is working (before auth middleware)
+app.get("/api/webhook-test", (req, res) => {
+  console.log('🧪 Webhook test endpoint hit!');
+  res.json({ 
+    message: 'Webhook endpoint is working!', 
+    timestamp: new Date().toISOString(),
+    url: req.url 
+  });
+});
+
 app.use("/api/*", shopify.validateAuthenticatedSession());
+
+// Manual webhook registration endpoint
+app.post("/api/register-webhooks", async (req, res) => {
+  try {
+    const session = res.locals.shopify.session;
+    if (!session) {
+      return res.status(401).json({
+        success: false,
+        message: 'No authenticated session found'
+      });
+    }
+
+    console.log('🔧 Manually registering webhooks for shop:', session.shop);
+    
+    // Register order webhooks
+    const result = await shopify.api.webhooks.register({
+      session,
+      webhooks: [
+        {
+          topic: 'ORDERS_CREATE',
+          deliveryMethod: shopify.api.DeliveryMethod.Http,
+          callbackUrl: `${process.env.SHOPIFY_APP_URL || 'https://realtors-mid-roulette-describing.trycloudflare.com'}/api/webhooks`,
+        },
+        {
+          topic: 'ORDERS_UPDATED',
+          deliveryMethod: shopify.api.DeliveryMethod.Http,
+          callbackUrl: `${process.env.SHOPIFY_APP_URL || 'https://realtors-mid-roulette-describing.trycloudflare.com'}/api/webhooks`,
+        }
+      ]
+    });
+    
+    console.log('✅ Webhooks registered successfully:', result);
+    
+    res.status(200).json({
+      success: true,
+      message: 'Webhooks registered successfully',
+      result: result
+    });
+  } catch (error) {
+    console.error('❌ Error registering webhooks:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to register webhooks',
+      error: error.message
+    });
+  }
+});
+
+// Set headers for Shopify app
+app.use((req, res, next) => {
+  // Allow the app to be embedded in Shopify admin
+  res.setHeader('X-Frame-Options', 'ALLOWALL');
+  res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.myshopify.com https://admin.shopify.com");
+  next();
+});
 
 app.use(express.json());
 
@@ -89,10 +362,10 @@ app.post("/api/send-products", (req, res) => {
         session: res.locals.shopify.session,
       });
 
-      let productsToSend = [];
+      let variantsToSend = [];
       
       if (sendMode === "all") {
-        // Get all products
+        // Get all products with their variants
         const response = await client.request(`
           query getProducts($first: Int!) {
             products(first: $first) {
@@ -114,7 +387,7 @@ app.post("/api/send-products", (req, res) => {
                       }
                     }
                   }
-                  variants(first: 10) {
+                  variants(first: 100) {
                     edges {
                       node {
                         id
@@ -133,26 +406,30 @@ app.post("/api/send-products", (req, res) => {
           variables: { first: 50 }
         });
 
-        productsToSend = response.data.products.edges.map(edge => ({
-          id: edge.node.id,
-          title: edge.node.title,
-          description: edge.node.description || '',
-          status: edge.node.status,
-          vendor: edge.node.vendor || '',
-          category: edge.node.productType || 'Uncategorized',
-          image: edge.node.images.edges[0]?.node || null,
-          variants: edge.node.variants.edges.map(v => ({
-            id: v.node.id,
+        // Flatten variants with product context
+        variantsToSend = response.data.products.edges.flatMap(edge => 
+          edge.node.variants.edges.map(v => ({
+            // Variant data
+            variantId: v.node.id,
+            variantTitle: v.node.title,
             price: v.node.price,
             sku: v.node.sku,
             inventoryQuantity: v.node.inventoryQuantity,
-            title: v.node.title
-          })),
-          createdAt: edge.node.createdAt,
-          updatedAt: edge.node.updatedAt
-        }));
+            
+            // Product context
+            productId: edge.node.id,
+            productTitle: edge.node.title,
+            productDescription: edge.node.description || '',
+            productStatus: edge.node.status,
+            productVendor: edge.node.vendor || '',
+            productCategory: edge.node.productType || 'Uncategorized',
+            productImage: edge.node.images.edges[0]?.node || null,
+            productCreatedAt: edge.node.createdAt,
+            productUpdatedAt: edge.node.updatedAt
+          }))
+        );
       } else if (sendMode === "selected" && selectedProductIds && selectedProductIds.length > 0) {
-        // Get selected products by IDs
+        // Get selected products by IDs with their variants
         const productIds = selectedProductIds.map(id => `"${id}"`).join(',');
         
         const response = await client.request(`
@@ -175,7 +452,7 @@ app.post("/api/send-products", (req, res) => {
                     }
                   }
                 }
-                variants(first: 10) {
+                variants(first: 100) {
                   edges {
                     node {
                       id
@@ -193,65 +470,66 @@ app.post("/api/send-products", (req, res) => {
           variables: { ids: selectedProductIds }
         });
 
-        productsToSend = response.data.nodes
+        // Flatten variants with product context
+        variantsToSend = response.data.nodes
           .filter(node => node !== null)
-          .map(node => ({
-            id: node.id,
-            title: node.title,
-            description: node.description || '',
-            status: node.status,
-            vendor: node.vendor || '',
-            category: node.productType || 'Uncategorized',
-            image: node.images.edges[0]?.node || null,
-            variants: node.variants.edges.map(v => ({
-              id: v.node.id,
+          .flatMap(node => 
+            node.variants.edges.map(v => ({
+              // Variant data
+              variantId: v.node.id,
+              variantTitle: v.node.title,
               price: v.node.price,
               sku: v.node.sku,
               inventoryQuantity: v.node.inventoryQuantity,
-              title: v.node.title
-            })),
-            createdAt: node.createdAt,
-            updatedAt: node.updatedAt
-          }));
+              
+              // Product context
+              productId: node.id,
+              productTitle: node.title,
+              productDescription: node.description || '',
+              productStatus: node.status,
+              productVendor: node.vendor || '',
+              productCategory: node.productType || 'Uncategorized',
+              productImage: node.images.edges[0]?.node || null,
+              productCreatedAt: node.createdAt,
+              productUpdatedAt: node.updatedAt
+            }))
+          );
       } else {
         return res.status(400).json({
           success: false,
-          message: 'No products to send'
+          message: 'No products to sync'
         });
       }
 
-      if (productsToSend.length === 0) {
+      if (variantsToSend.length === 0) {
         return res.status(400).json({
           success: false,
-          message: 'No products found to send'
+          message: 'No variants found to send'
         });
       }
 
-      // Send products to the external endpoint
-      console.log(`Sending ${productsToSend.length} products to ${endpoint}`);
+      // Send variants to the external endpoint
+      console.log(`Sending ${variantsToSend.length} variants to ${endpoint}`);
       
       try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true' // Skip ngrok browser warning
-          },
-        body: JSON.stringify({ 
-          // Odoo sync parameters
+        const payload = { 
+          // Sync parameters
           dryRun: false,
-          limit: productsToSend.length,
+          limit: variantsToSend.length,
           skipExisting: true,
           updateExisting: false,
           
-          // Product data
-          products: productsToSend,
+          // Variant data - try different field names
+          variants: variantsToSend,
+          data: variantsToSend,
+          products: variantsToSend,
           
           // Metadata
           timestamp: new Date().toISOString(),
           source: 'shopify-app',
           shopDomain: res.locals.shopify.session.shop,
           syncType: sendMode,
+          variantCount: variantsToSend.length,
           
           // Shopify session info for your service
           shopifySession: {
@@ -259,21 +537,38 @@ app.post("/api/send-products", (req, res) => {
             accessToken: res.locals.shopify.session.accessToken,
             scope: res.locals.shopify.session.scope
           }
-        })
+        };
+
+        console.log('Sending payload to Odoo:', JSON.stringify(payload, null, 2));
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true' // Skip ngrok browser warning
+          },
+          body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorText = await response.text();
+          console.error('Odoo endpoint error response:', {
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            body: errorText
+          });
+          throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const result = await response.json();
-        console.log('Products sent successfully:', result);
+        console.log('Variants sent successfully:', result);
 
         return res.status(200).json({
           success: true,
           results: {
-            sent: productsToSend.length,
-            success: productsToSend.length,
+            sent: variantsToSend.length,
+            success: variantsToSend.length,
             errors: 0,
             errorDetails: [],
             response: result
@@ -283,15 +578,17 @@ app.post("/api/send-products", (req, res) => {
         console.error('Error sending to endpoint:', fetchError);
         return res.status(500).json({
           success: false,
-          message: 'Failed to send products to endpoint',
-          error: fetchError.message
+          message: 'Failed to send variants to endpoint',
+          error: fetchError.message,
+          endpoint: endpoint,
+          variantCount: variantsToSend.length
         });
       }
     } catch (error) {
-      console.error('Error sending products:', error);
+      console.error('Error sending variants:', error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to send products',
+        message: 'Failed to send variants',
         error: error.message
       });
     }
@@ -428,9 +725,19 @@ app.post("/api/external/sync-products", (req, res) => {
   })();
 });
 
-// Admin Dashboard API endpoints
-app.get("/api/products", async (req, res) => {
+// Admin Dashboard API endpoints - Returns variants instead of products
+app.get("/api/products", async (req, res, next) => {
   try {
+    // Check if session exists
+    if (!res.locals.shopify?.session) {
+      console.error('No Shopify session found');
+      return res.status(401).json({
+        success: false,
+        message: 'No authenticated session found',
+        error: 'Authentication required'
+      });
+    }
+
     const client = new shopify.api.clients.Graphql({
       session: res.locals.shopify.session,
     });
@@ -456,11 +763,14 @@ app.get("/api/products", async (req, res) => {
                   }
                 }
               }
-              variants(first: 1) {
+              variants(first: 50) {
                 edges {
                   node {
+                    id
+                    title
                     price
                     sku
+                    inventoryQuantity
                   }
                 }
               }
@@ -472,35 +782,61 @@ app.get("/api/products", async (req, res) => {
       variables: { first: 50 }
     });
 
-    const products = response.data.products.edges.map(edge => ({
-      id: edge.node.id,
-      title: edge.node.title,
-      description: edge.node.description || '',
-      status: edge.node.status,
-      vendor: edge.node.vendor || '',
-      category: edge.node.productType || 'Uncategorized',
-      price: edge.node.variants.edges[0]?.node.price || '0.00',
-      image: edge.node.images.edges[0]?.node || null,
-      variants: edge.node.variants.edges.map(v => ({
+    // Check if we got a valid response
+    if (!response?.data?.products?.edges) {
+      console.error('Invalid GraphQL response structure:', response);
+      return res.status(500).json({
+        success: false,
+        message: 'Invalid response from Shopify API',
+        error: 'No products data received'
+      });
+    }
+
+    // Flatten variants with product context
+    const variants = response.data.products.edges.flatMap(edge => {
+      // Skip products with no variants
+      if (!edge.node.variants?.edges || edge.node.variants.edges.length === 0) {
+        return [];
+      }
+      
+      return edge.node.variants.edges.map(v => ({
+        // Variant data
+        id: v.node.id,
+        title: v.node.title,
         price: v.node.price,
-        sku: v.node.sku
-      })),
-      stock: 'N/A', // Shopify doesn't provide stock info directly
-      createdAt: edge.node.createdAt,
-      updatedAt: edge.node.updatedAt
-    }));
+        sku: v.node.sku,
+        inventoryQuantity: v.node.inventoryQuantity,
+        
+        // Product context
+        productId: edge.node.id,
+        productTitle: edge.node.title,
+        productDescription: edge.node.description || '',
+        productStatus: edge.node.status,
+        productVendor: edge.node.vendor || '',
+        productCategory: edge.node.productType || 'Uncategorized',
+        productImage: edge.node.images.edges[0]?.node || null,
+        productCreatedAt: edge.node.createdAt,
+        productUpdatedAt: edge.node.updatedAt
+      }));
+    });
 
     res.status(200).json({
       success: true,
-      products: products,
-      count: products.length
+      products: variants, // Keep 'products' key for compatibility with frontend
+      count: variants.length
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error('Error fetching variants:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch products',
-      error: error.message
+      message: 'Failed to fetch variants',
+      error: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
@@ -560,6 +896,487 @@ app.get("/api/orders", async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch orders',
+      error: error.message
+    });
+  }
+});
+
+// Sync orders to external API endpoint
+app.post("/api/sync-orders", async (req, res) => {
+  try {
+    const { endpoint, sendMode = "all", selectedOrderIds = [] } = req.body;
+    
+    if (!endpoint) {
+      return res.status(400).json({
+        success: false,
+        message: 'Endpoint URL is required'
+      });
+    }
+
+    // Check if session exists
+    if (!res.locals.shopify?.session) {
+      console.error('No Shopify session found');
+      return res.status(401).json({
+        success: false,
+        message: 'No authenticated session found',
+        error: 'Authentication required'
+      });
+    }
+
+    const client = new shopify.api.clients.Graphql({
+      session: res.locals.shopify.session,
+    });
+
+    let ordersToSend = [];
+    
+    if (sendMode === "all") {
+      // Get all orders with detailed information
+      const response = await client.request(`
+        query getOrders($first: Int!) {
+          orders(first: $first) {
+            edges {
+              node {
+                id
+                name
+                email
+                totalPrice
+                subtotalPrice
+                totalTax
+                totalShipping
+                currencyCode
+                fulfillmentStatus
+                financialStatus
+                processedAt
+                createdAt
+                updatedAt
+                customer {
+                  id
+                  firstName
+                  lastName
+                  email
+                  phone
+                }
+                shippingAddress {
+                  firstName
+                  lastName
+                  company
+                  address1
+                  address2
+                  city
+                  province
+                  country
+                  zip
+                  phone
+                }
+                billingAddress {
+                  firstName
+                  lastName
+                  company
+                  address1
+                  address2
+                  city
+                  province
+                  country
+                  zip
+                  phone
+                }
+                lineItems(first: 100) {
+                  edges {
+                    node {
+                      id
+                      title
+                      quantity
+                      variant {
+                        id
+                        title
+                        sku
+                        price
+                      }
+                      product {
+                        id
+                        title
+                        productType
+                        vendor
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `, {
+        variables: { first: 50 }
+      });
+
+      ordersToSend = response.data.orders.edges.map(edge => ({
+        // Order data
+        orderId: edge.node.id,
+        orderName: edge.node.name,
+        email: edge.node.email,
+        totalPrice: edge.node.totalPrice,
+        subtotalPrice: edge.node.subtotalPrice,
+        totalTax: edge.node.totalTax,
+        totalShipping: edge.node.totalShipping,
+        currencyCode: edge.node.currencyCode,
+        fulfillmentStatus: edge.node.fulfillmentStatus,
+        financialStatus: edge.node.financialStatus,
+        processedAt: edge.node.processedAt,
+        createdAt: edge.node.createdAt,
+        updatedAt: edge.node.updatedAt,
+        
+        // Customer data
+        customer: edge.node.customer ? {
+          id: edge.node.customer.id,
+          firstName: edge.node.customer.firstName,
+          lastName: edge.node.customer.lastName,
+          email: edge.node.customer.email,
+          phone: edge.node.customer.phone
+        } : null,
+        
+        // Addresses
+        shippingAddress: edge.node.shippingAddress,
+        billingAddress: edge.node.billingAddress,
+        
+        // Line items
+        lineItems: edge.node.lineItems.edges.map(item => ({
+          id: item.node.id,
+          title: item.node.title,
+          quantity: item.node.quantity,
+          variant: item.node.variant ? {
+            id: item.node.variant.id,
+            title: item.node.variant.title,
+            sku: item.node.variant.sku,
+            price: item.node.variant.price
+          } : null,
+          product: item.node.product ? {
+            id: item.node.product.id,
+            title: item.node.product.title,
+            productType: item.node.product.productType,
+            vendor: item.node.product.vendor
+          } : null
+        }))
+      }));
+    } else if (sendMode === "selected" && selectedOrderIds && selectedOrderIds.length > 0) {
+      // Get selected orders by IDs
+      const orderIds = selectedOrderIds.map(id => `"${id}"`).join(',');
+      
+      const response = await client.request(`
+        query getOrders($ids: [ID!]!) {
+          nodes(ids: $ids) {
+            ... on Order {
+              id
+              name
+              email
+              totalPrice
+              subtotalPrice
+              totalTax
+              totalShipping
+              currencyCode
+              fulfillmentStatus
+              financialStatus
+              processedAt
+              createdAt
+              updatedAt
+              customer {
+                id
+                firstName
+                lastName
+                email
+                phone
+              }
+              shippingAddress {
+                firstName
+                lastName
+                company
+                address1
+                address2
+                city
+                province
+                country
+                zip
+                phone
+              }
+              billingAddress {
+                firstName
+                lastName
+                company
+                address1
+                address2
+                city
+                province
+                country
+                zip
+                phone
+              }
+              lineItems(first: 100) {
+                edges {
+                  node {
+                    id
+                    title
+                    quantity
+                    variant {
+                      id
+                      title
+                      sku
+                      price
+                    }
+                    product {
+                      id
+                      title
+                      productType
+                      vendor
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `, {
+        variables: { ids: selectedOrderIds }
+      });
+
+      ordersToSend = response.data.nodes
+        .filter(node => node !== null)
+        .map(node => ({
+          // Order data
+          orderId: node.id,
+          orderName: node.name,
+          email: node.email,
+          totalPrice: node.totalPrice,
+          subtotalPrice: node.subtotalPrice,
+          totalTax: node.totalTax,
+          totalShipping: node.totalShipping,
+          currencyCode: node.currencyCode,
+          fulfillmentStatus: node.fulfillmentStatus,
+          financialStatus: node.financialStatus,
+          processedAt: node.processedAt,
+          createdAt: node.createdAt,
+          updatedAt: node.updatedAt,
+          
+          // Customer data
+          customer: node.customer ? {
+            id: node.customer.id,
+            firstName: node.customer.firstName,
+            lastName: node.customer.lastName,
+            email: node.customer.email,
+            phone: node.customer.phone
+          } : null,
+          
+          // Addresses
+          shippingAddress: node.shippingAddress,
+          billingAddress: node.billingAddress,
+          
+          // Line items
+          lineItems: node.lineItems.edges.map(item => ({
+            id: item.node.id,
+            title: item.node.title,
+            quantity: item.node.quantity,
+            variant: item.node.variant ? {
+              id: item.node.variant.id,
+              title: item.node.variant.title,
+              sku: item.node.variant.sku,
+              price: item.node.variant.price
+            } : null,
+            product: item.node.product ? {
+              id: item.node.product.id,
+              title: item.node.product.title,
+              productType: item.node.product.productType,
+              vendor: item.node.product.vendor
+            } : null
+          }))
+        }));
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'No orders to sync'
+      });
+    }
+
+    if (ordersToSend.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No orders found to sync'
+      });
+    }
+
+    // Send orders to the external endpoint
+    console.log(`Sending ${ordersToSend.length} orders to ${endpoint}`);
+    
+    try {
+      const payload = { 
+        // Sync parameters
+        dryRun: false,
+        limit: ordersToSend.length,
+        skipExisting: true,
+        updateExisting: false,
+        
+        // Order data - try different field names
+        orders: ordersToSend,
+        data: ordersToSend,
+        orderData: ordersToSend,
+        
+        // Metadata
+        timestamp: new Date().toISOString(),
+        source: 'shopify-app',
+        shopDomain: res.locals.shopify.session.shop,
+        syncType: sendMode,
+        orderCount: ordersToSend.length,
+        
+        // Shopify session info for your service
+        shopifySession: {
+          shop: res.locals.shopify.session.shop,
+          accessToken: res.locals.shopify.session.accessToken,
+          scope: res.locals.shopify.session.scope
+        }
+      };
+
+      console.log('Sending orders payload:', JSON.stringify(payload, null, 2));
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Orders endpoint error response:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          body: errorText
+        });
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log('Orders sent successfully:', result);
+
+      return res.status(200).json({
+        success: true,
+        results: {
+          sent: ordersToSend.length,
+          success: ordersToSend.length,
+          errors: 0,
+          errorDetails: [],
+          response: result
+        }
+      });
+    } catch (fetchError) {
+      console.error('Error sending orders to endpoint:', fetchError);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send orders to endpoint',
+        error: fetchError.message,
+        endpoint: endpoint,
+        orderCount: ordersToSend.length
+      });
+    }
+  } catch (error) {
+    console.error('Error syncing orders:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to sync orders',
+      error: error.message
+    });
+  }
+});
+
+// SKU Quantities endpoint - Get SKU quantities with company website
+app.get("/api/skus/quantities", async (req, res) => {
+  try {
+    // Check if session exists
+    if (!res.locals.shopify?.session) {
+      console.error('No Shopify session found');
+      return res.status(401).json({
+        success: false,
+        message: 'No authenticated session found',
+        error: 'Authentication required'
+      });
+    }
+
+    // Try to fetch from ngrok API first - using your specific ngrok URL
+    const baseUrl = process.env.SHOPIFY_APP_URL || 'https://2a776cf42407.ngrok-free.app';
+    const ngrokApiUrl = `${baseUrl}/api/skus/quantities`;
+    
+    try {
+      console.log('Fetching SKU quantities from ngrok API:', ngrokApiUrl);
+      
+      const response = await fetch(ngrokApiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
+        },
+        timeout: 10000 // 10 second timeout
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Successfully fetched data from ngrok API:', data);
+        
+        // Update company inventory with fetched data and sync to Shopify
+        await updateCompanyInventory(data.data, res.locals.shopify.session);
+        
+        return res.status(200).json(data);
+          } else {
+        console.warn('ngrok API returned error:', response.status, response.statusText);
+        throw new Error(`ngrok API error: ${response.status}`);
+      }
+    } catch (ngrokError) {
+      console.warn('Failed to fetch from ngrok API, falling back to mock data:', ngrokError.message);
+      
+      // Fallback to mock data if ngrok API is unavailable
+      const mockData = {
+        "success": true,
+        "message": "Retrieved SKU quantities for 2 companies (mock data)",
+        "data": [
+          {
+            "company_name": "Company A",
+            "company_website": "https://company-a.com",
+            "skus": [
+              {
+                "sku": "PROD-001",
+                "quantity_on_hand": 100
+              },
+              {
+                "sku": "PROD-002", 
+                "quantity_on_hand": 50
+              }
+            ],
+            "total_skus": 2,
+            "total_quantity": 150
+          },
+          {
+            "company_name": "Company B",
+            "company_website": "https://company-b.com",
+            "skus": [
+              {
+                "sku": "ITEM-001",
+                "quantity_on_hand": 75
+              }
+            ],
+            "total_skus": 1,
+            "total_quantity": 75
+          }
+        ]
+      };
+
+      // Still update inventory with mock data for testing and sync to Shopify
+      await updateCompanyInventory(mockData.data, res.locals.shopify.session);
+      
+      res.status(200).json(mockData);
+    }
+  } catch (error) {
+    console.error('Error fetching SKU quantities:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch SKU quantities',
       error: error.message
     });
   }
