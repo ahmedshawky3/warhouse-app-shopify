@@ -40,8 +40,8 @@ export default function ProductSender() {
   const [sendResults, setSendResults] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [sendMode, setSendMode] = useState("all"); // "all" or "selected"
-  const [endpointUrl, setEndpointUrl] = useState("https://2a776cf42407.ngrok-free.app/api/send-products");
-  const [showEndpointModal, setShowEndpointModal] = useState(false);
+  // Use the pre-configured external API endpoint
+  const endpointUrl = "EXTERNAL_API"; // This will be handled by the backend
   const [skuLoading, setSkuLoading] = useState(false);
   const [skuData, setSkuData] = useState(null);
 
@@ -86,6 +86,8 @@ export default function ProductSender() {
     onError: (error) => {
       console.error("Send error:", error);
       setSendInProgress(false);
+      // Show error message to user
+      alert(`Sync failed: ${error.message}`);
     },
   });
 
@@ -104,20 +106,14 @@ export default function ProductSender() {
   }, [selectedProducts]);
 
   const handleConfirmSend = useCallback(() => {
-    if (!endpointUrl) {
-      alert("Please enter an endpoint URL first.");
-      setShowEndpointModal(true);
-      return;
-    }
-
     setSendInProgress(true);
     
     sendProductsMutation.mutate({ 
-      endpoint: endpointUrl,
+      endpoint: "EXTERNAL_API", // Use pre-configured endpoint
       sendMode: sendMode,
       selectedProductIds: sendMode === "selected" ? selectedProducts : []
     });
-  }, [sendMode, selectedProducts, endpointUrl, sendProductsMutation]);
+  }, [sendMode, selectedProducts, sendProductsMutation]);
 
   const handleCancelSend = useCallback(() => {
     setSendModalActive(false);
@@ -139,11 +135,6 @@ export default function ProductSender() {
     }
   }, [selectedProducts.length, shopifyVariants]);
 
-  const handleEndpointSubmit = useCallback(() => {
-    if (endpointUrl.trim()) {
-      setShowEndpointModal(false);
-    }
-  }, [endpointUrl]);
 
   const handleFetchSkus = useCallback(async () => {
     setSkuLoading(true);
@@ -211,9 +202,6 @@ export default function ProductSender() {
                 </Text>
               </div>
               <ButtonGroup>
-                <Button onClick={() => setShowEndpointModal(true)}>
-                  Configure Endpoint
-                </Button>
                 <Button 
                   onClick={handleFetchSkus} 
                   loading={skuLoading}
@@ -229,14 +217,11 @@ export default function ProductSender() {
         {/* Endpoint Status */}
         <Layout.Section>
           <Banner
-            status={endpointUrl ? "success" : "warning"}
-            title={endpointUrl ? "Endpoint Configured" : "No Endpoint Set"}
+            status="success"
+            title="External API Configured"
           >
             <Text variant="bodyMd">
-              {endpointUrl 
-                ? `Variants will be synced to Odoo via: ${endpointUrl}`
-                : "Please configure an Odoo sync endpoint URL."
-              }
+              Variants will be synced to Odoo via the pre-configured external API endpoint.
             </Text>
           </Banner>
         </Layout.Section>
@@ -445,34 +430,6 @@ export default function ProductSender() {
         )}
       </Layout>
 
-      {/* Endpoint Configuration Modal */}
-        <Modal
-          open={showEndpointModal}
-          onClose={() => setShowEndpointModal(false)}
-          title="Configure Odoo Sync Endpoint"
-          primaryAction={{
-            content: "Save Endpoint",
-            onAction: handleEndpointSubmit,
-          }}
-          secondaryActions={[
-            {
-              content: "Cancel",
-              onAction: () => setShowEndpointModal(false),
-            },
-          ]}
-        >
-          <Modal.Section>
-            <FormLayout>
-              <TextField
-                label="Odoo Sync Endpoint URL"
-                value={endpointUrl}
-                onChange={setEndpointUrl}
-                placeholder="https://your-domain.com/api/odoo/sync/shopify-to-odoo"
-                helpText="Enter the Odoo sync endpoint URL for Shopify to Odoo synchronization"
-              />
-            </FormLayout>
-          </Modal.Section>
-        </Modal>
 
       {/* Send Confirmation Modal */}
         <Modal
@@ -500,7 +457,7 @@ export default function ProductSender() {
             </Text>
             <div style={{ marginTop: "16px" }}>
               <Text variant="bodyMd">
-                <strong>Odoo Sync Endpoint:</strong> {endpointUrl}
+                <strong>Odoo Sync Endpoint:</strong> Pre-configured External API
               </Text>
             </div>
           </Modal.Section>

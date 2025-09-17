@@ -1,5 +1,9 @@
 import { DeliveryMethod } from "@shopify/shopify-api";
 
+// Global configuration variables
+const EXTERNAL_API_BASE_URL = process.env.EXTERNAL_API_BASE_URL || "https://58a6823a557b.ngrok-free.app";
+const ORDER_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/receive-orders`;
+
 /**
  * @type {{[key: string]: import("@shopify/shopify-api").WebhookHandler}}
  */
@@ -17,7 +21,7 @@ export default {
         console.log('🛒 New order created:', orderData.name);
         
         // Get the external API endpoint from environment or config
-        const externalEndpoint = process.env.ORDER_SYNC_ENDPOINT || 'https://2a776cf42407.ngrok-free.app/api/receive-orders';
+        const externalEndpoint = ORDER_SYNC_ENDPOINT;
         
         // Transform order data to match our sync format
         const transformedOrder = {
@@ -127,7 +131,7 @@ export default {
         console.log('📝 Order updated:', orderData.name);
         
         // Get the external API endpoint from environment or config
-        const externalEndpoint = process.env.ORDER_SYNC_ENDPOINT || 'https://2a776cf42407.ngrok-free.app/api/receive-orders';
+        const externalEndpoint = ORDER_SYNC_ENDPOINT;
         
         // Transform order data to match our sync format
         const transformedOrder = {

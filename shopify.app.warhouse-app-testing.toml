@@ -1,0 +1,27 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "5933c2e4517c47713d3c7c90a7589721"
+name = "warhouse app testing"
+application_url = "https://longitude-lows-gain-butterfly.trycloudflare.com"
+embedded = true
+handle = "warhouse-app-testing"
+
+[build]
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-07"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_inventory,read_orders,read_products,write_customers,write_inventory,write_orders,write_products"
+
+[auth]
+redirect_urls = [
+  "https://longitude-lows-gain-butterfly.trycloudflare.com/auth/callback",
+  "https://longitude-lows-gain-butterfly.trycloudflare.com/auth/shopify/callback",
+  "https://longitude-lows-gain-butterfly.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false

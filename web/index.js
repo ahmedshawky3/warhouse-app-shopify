@@ -1,13 +1,34 @@
 // @ts-nocheck
-import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
 import fetch from "node-fetch";
+import dotenv from "dotenv";
+
+// Load environment variables from .env file
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const envPath = join(__dirname, '..', '.env');
+
+dotenv.config({ path: envPath });
+
+// Debug: Log environment variables
+console.log('Environment variables loaded:');
+console.log('EXTERNAL_API_BASE_URL:', process.env.EXTERNAL_API_BASE_URL);
+console.log('SHOPIFY_API_KEY:', process.env.SHOPIFY_API_KEY);
 
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
+
+// Global configuration variables
+const EXTERNAL_API_BASE_URL =  "https://58a6823a557b.ngrok-free.app";
+const ORDER_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/receive-orders`;
+const SKU_QUANTITIES_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/skus/quantities`;
+const PRODUCT_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/send-products`;
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -276,12 +297,12 @@ app.post("/api/register-webhooks", async (req, res) => {
         {
           topic: 'ORDERS_CREATE',
           deliveryMethod: shopify.api.DeliveryMethod.Http,
-          callbackUrl: `${process.env.SHOPIFY_APP_URL || 'https://realtors-mid-roulette-describing.trycloudflare.com'}/api/webhooks`,
+          callbackUrl: `${process.env.SHOPIFY_APP_URL || EXTERNAL_API_BASE_URL}/api/webhooks`,
         },
         {
           topic: 'ORDERS_UPDATED',
           deliveryMethod: shopify.api.DeliveryMethod.Http,
-          callbackUrl: `${process.env.SHOPIFY_APP_URL || 'https://realtors-mid-roulette-describing.trycloudflare.com'}/api/webhooks`,
+          callbackUrl: `${process.env.SHOPIFY_APP_URL || EXTERNAL_API_BASE_URL}/api/webhooks`,
         }
       ]
     });
@@ -350,10 +371,25 @@ app.post("/api/send-products", (req, res) => {
       console.log("Send products request received:", req.body);
       const { endpoint, sendMode, selectedProductIds } = req.body;
       
-      if (!endpoint) {
+      // Use pre-configured endpoint if "EXTERNAL_API" is specified
+      const actualEndpoint = endpoint === "EXTERNAL_API" ? PRODUCT_SYNC_ENDPOINT : endpoint;
+      
+      console.log('Endpoint configuration:', {
+        requestedEndpoint: endpoint,
+        actualEndpoint: actualEndpoint,
+        PRODUCT_SYNC_ENDPOINT: PRODUCT_SYNC_ENDPOINT,
+        EXTERNAL_API_BASE_URL: process.env.EXTERNAL_API_BASE_URL
+      });
+      
+      if (!actualEndpoint) {
         return res.status(400).json({
           success: false,
-          message: 'Endpoint URL is required'
+          message: 'External API endpoint not configured. Please set EXTERNAL_API_BASE_URL environment variable.',
+          details: {
+            requestedEndpoint: endpoint,
+            PRODUCT_SYNC_ENDPOINT: PRODUCT_SYNC_ENDPOINT,
+            EXTERNAL_API_BASE_URL: process.env.EXTERNAL_API_BASE_URL
+          }
         });
       }
 
@@ -509,7 +545,7 @@ app.post("/api/send-products", (req, res) => {
       }
 
       // Send variants to the external endpoint
-      console.log(`Sending ${variantsToSend.length} variants to ${endpoint}`);
+      console.log(`Sending ${variantsToSend.length} variants to ${actualEndpoint}`);
       
       try {
         const payload = { 
@@ -541,7 +577,7 @@ app.post("/api/send-products", (req, res) => {
 
         console.log('Sending payload to Odoo:', JSON.stringify(payload, null, 2));
 
-        const response = await fetch(endpoint, {
+        const response = await fetch(actualEndpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -580,8 +616,15 @@ app.post("/api/send-products", (req, res) => {
           success: false,
           message: 'Failed to send variants to endpoint',
           error: fetchError.message,
-          endpoint: endpoint,
-          variantCount: variantsToSend.length
+          endpoint: actualEndpoint,
+          variantCount: variantsToSend.length,
+          errorType: fetchError.code || 'UNKNOWN',
+          errorDetails: {
+            name: fetchError.name,
+            message: fetchError.message,
+            code: fetchError.code,
+            cause: fetchError.cause
+          }
         });
       }
     } catch (error) {
@@ -1300,14 +1343,14 @@ app.get("/api/skus/quantities", async (req, res) => {
       });
     }
 
-    // Try to fetch from ngrok API first - using your specific ngrok URL
-    const baseUrl = process.env.SHOPIFY_APP_URL || 'https://2a776cf42407.ngrok-free.app';
-    const ngrokApiUrl = `${baseUrl}/api/skus/quantities`;
+    // Try to fetch from external API first - using configured URL
+    const baseUrl = process.env.SHOPIFY_APP_URL || EXTERNAL_API_BASE_URL;
+    const skuApiUrl = SKU_QUANTITIES_ENDPOINT;
     
     try {
-      console.log('Fetching SKU quantities from ngrok API:', ngrokApiUrl);
+      console.log('Fetching SKU quantities from external API:', skuApiUrl);
       
-      const response = await fetch(ngrokApiUrl, {
+      const response = await fetch(skuApiUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -1318,20 +1361,20 @@ app.get("/api/skus/quantities", async (req, res) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Successfully fetched data from ngrok API:', data);
+        console.log('Successfully fetched data from external API:', data);
         
         // Update company inventory with fetched data and sync to Shopify
         await updateCompanyInventory(data.data, res.locals.shopify.session);
         
         return res.status(200).json(data);
           } else {
-        console.warn('ngrok API returned error:', response.status, response.statusText);
-        throw new Error(`ngrok API error: ${response.status}`);
+        console.warn('External API returned error:', response.status, response.statusText);
+        throw new Error(`External API error: ${response.status}`);
       }
-    } catch (ngrokError) {
-      console.warn('Failed to fetch from ngrok API, falling back to mock data:', ngrokError.message);
+    } catch (externalApiError) {
+      console.warn('Failed to fetch from external API, falling back to mock data:', externalApiError.message);
       
-      // Fallback to mock data if ngrok API is unavailable
+      // Fallback to mock data if external API is unavailable
       const mockData = {
         "success": true,
         "message": "Retrieved SKU quantities for 2 companies (mock data)",
