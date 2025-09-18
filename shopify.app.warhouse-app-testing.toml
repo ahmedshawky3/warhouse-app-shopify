@@ -2,7 +2,7 @@
 
 client_id = "5933c2e4517c47713d3c7c90a7589721"
 name = "warhouse app testing"
-application_url = "https://longitude-lows-gain-butterfly.trycloudflare.com"
+application_url = "https://plastics-extreme-inn-ultimate.trycloudflare.com"
 embedded = true
 handle = "warhouse-app-testing"
 
@@ -18,9 +18,9 @@ scopes = "read_customers,read_inventory,read_orders,read_products,write_customer
 
 [auth]
 redirect_urls = [
-  "https://longitude-lows-gain-butterfly.trycloudflare.com/auth/callback",
-  "https://longitude-lows-gain-butterfly.trycloudflare.com/auth/shopify/callback",
-  "https://longitude-lows-gain-butterfly.trycloudflare.com/api/auth/callback"
+  "https://plastics-extreme-inn-ultimate.trycloudflare.com/auth/callback",
+  "https://plastics-extreme-inn-ultimate.trycloudflare.com/auth/shopify/callback",
+  "https://plastics-extreme-inn-ultimate.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

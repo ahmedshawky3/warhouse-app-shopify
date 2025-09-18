@@ -1,7 +1,7 @@
 import { DeliveryMethod } from "@shopify/shopify-api";
 
 // Global configuration variables
-const EXTERNAL_API_BASE_URL = process.env.EXTERNAL_API_BASE_URL || "https://58a6823a557b.ngrok-free.app";
+const EXTERNAL_API_BASE_URL = process.env.EXTERNAL_API_BASE_URL || "https://7f64bc8bf7b4.ngrok-free.app";
 const ORDER_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/receive-orders`;
 
 /**
@@ -9,7 +9,7 @@ const ORDER_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/receive-orders`;
  */
 export default {
   /**
-   * Webhook handler for new orders - automatically sends to external API
+   * Webhook handler for new orders - automatically sends to odoo API
    */
   ORDERS_CREATE: {
     deliveryMethod: DeliveryMethod.Http,

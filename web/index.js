@@ -25,7 +25,7 @@ import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
 
 // Global configuration variables
-const EXTERNAL_API_BASE_URL =  "https://58a6823a557b.ngrok-free.app";
+const EXTERNAL_API_BASE_URL =  "https://7f64bc8bf7b4.ngrok-free.app";
 const ORDER_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/receive-orders`;
 const SKU_QUANTITIES_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/skus/quantities`;
 const PRODUCT_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/send-products`;
