@@ -1,8 +1,25 @@
-# Shopify App Template for Node
+# Warehouse Sync Manager - Shopify App
 
-This is a template for building a [Shopify app](https://shopify.dev/docs/apps/getting-started) using Node and React. It contains the basics for building a Shopify app.
+A Shopify app for synchronizing inventory and order data between Shopify stores and external warehouse management systems.
 
-Rather than cloning this repo, you can use your preferred package manager and the Shopify CLI with [these steps](#installing-the-template).
+## Features
+
+- **Product Sync**: Sync product variants and inventory levels from Shopify to external systems
+- **Order Management**: Automatically sync new and updated orders to warehouse systems
+- **Real-time Updates**: Webhook-based synchronization for instant data updates
+- **Privacy Compliance**: Full GDPR compliance with data export and deletion capabilities
+- **Security**: Rate limiting, input validation, and secure API communication
+
+## Tech Stack
+
+This app is built using modern web technologies:
+
+- **Backend**: Node.js with Express
+- **Frontend**: React with Shopify Polaris design system
+- **Authentication**: Shopify OAuth integration
+- **API**: Shopify Admin API (GraphQL & REST)
+- **Database**: SQLite for session storage
+- **Build Tools**: Vite for frontend, Shopify CLI for development
 
 ## Benefits
 

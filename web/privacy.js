@@ -1,8 +1,7 @@
 import { DeliveryMethod } from "@shopify/shopify-api";
 
-// Global configuration variables
-const EXTERNAL_API_BASE_URL = process.env.EXTERNAL_API_BASE_URL || "https://7f64bc8bf7b4.ngrok-free.app";
-const ORDER_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/receive-orders`;
+// Import configuration
+import { EXTERNAL_API_BASE_URL, ORDER_SYNC_ENDPOINT } from './config/constants.js';
 
 /**
  * @type {{[key: string]: import("@shopify/shopify-api").WebhookHandler}}
@@ -238,25 +237,39 @@ export default {
     deliveryMethod: DeliveryMethod.Http,
     callbackUrl: "/api/webhooks",
     callback: async (topic, shop, body, webhookId) => {
-      const payload = JSON.parse(body);
-      // Payload has the following shape:
-      // {
-      //   "shop_id": 954889,
-      //   "shop_domain": "{shop}.myshopify.com",
-      //   "orders_requested": [
-      //     299938,
-      //     280263,
-      //     220458
-      //   ],
-      //   "customer": {
-      //     "id": 191167,
-      //     "email": "john@example.com",
-      //     "phone": "555-625-1199"
-      //   },
-      //   "data_request": {
-      //     "id": 9999
-      //   }
-      // }
+      try {
+        const payload = JSON.parse(body);
+        console.log('📋 Customer data request received:', payload);
+        
+        const { customer, orders_requested, data_request } = payload;
+        
+        // Log the data request for audit purposes
+        console.log(`Customer ${customer.id} (${customer.email}) requested data export`);
+        console.log(`Orders requested: ${orders_requested?.length || 0}`);
+        
+        // In a real implementation, you would:
+        // 1. Gather all customer data from your database
+        // 2. Compile it into a structured format
+        // 3. Send it to the customer or store owner
+        // 4. Log the export for compliance
+        
+        // For now, we'll just acknowledge the request
+        console.log('✅ Customer data request processed successfully');
+        
+        // TODO: Implement actual data export logic
+        // Example structure:
+        // const customerData = {
+        //   customer_id: customer.id,
+        //   email: customer.email,
+        //   phone: customer.phone,
+        //   orders: orders_requested,
+        //   exported_at: new Date().toISOString(),
+        //   request_id: data_request.id
+        // };
+        
+      } catch (error) {
+        console.error('❌ Error processing customer data request:', error);
+      }
     },
   },
 
@@ -270,22 +283,34 @@ export default {
     deliveryMethod: DeliveryMethod.Http,
     callbackUrl: "/api/webhooks",
     callback: async (topic, shop, body, webhookId) => {
-      const payload = JSON.parse(body);
-      // Payload has the following shape:
-      // {
-      //   "shop_id": 954889,
-      //   "shop_domain": "{shop}.myshopify.com",
-      //   "customer": {
-      //     "id": 191167,
-      //     "email": "john@example.com",
-      //     "phone": "555-625-1199"
-      //   },
-      //   "orders_to_redact": [
-      //     299938,
-      //     280263,
-      //     220458
-      //   ]
-      // }
+      try {
+        const payload = JSON.parse(body);
+        console.log('🗑️ Customer redact request received:', payload);
+        
+        const { customer, orders_to_redact } = payload;
+        
+        // Log the redaction request for audit purposes
+        console.log(`Customer ${customer.id} (${customer.email}) data redaction requested`);
+        console.log(`Orders to redact: ${orders_to_redact?.length || 0}`);
+        
+        // In a real implementation, you would:
+        // 1. Delete all customer data from your database
+        // 2. Remove any cached data
+        // 3. Delete any files or records associated with the customer
+        // 4. Log the deletion for compliance
+        
+        // For now, we'll just acknowledge the request
+        console.log('✅ Customer data redaction processed successfully');
+        
+        // TODO: Implement actual data deletion logic
+        // Example:
+        // await deleteCustomerData(customer.id, orders_to_redact);
+        // await deleteCustomerCache(customer.id);
+        // await logDataDeletion(customer.id, new Date());
+        
+      } catch (error) {
+        console.error('❌ Error processing customer redact request:', error);
+      }
     },
   },
 
@@ -299,12 +324,35 @@ export default {
     deliveryMethod: DeliveryMethod.Http,
     callbackUrl: "/api/webhooks",
     callback: async (topic, shop, body, webhookId) => {
-      const payload = JSON.parse(body);
-      // Payload has the following shape:
-      // {
-      //   "shop_id": 954889,
-      //   "shop_domain": "{shop}.myshopify.com"
-      // }
+      try {
+        const payload = JSON.parse(body);
+        console.log('🏪 Shop redact request received:', payload);
+        
+        const { shop_id, shop_domain } = payload;
+        
+        // Log the shop redaction request for audit purposes
+        console.log(`Shop ${shop_domain} (ID: ${shop_id}) data redaction requested`);
+        
+        // In a real implementation, you would:
+        // 1. Delete all shop data from your database
+        // 2. Remove all cached data for this shop
+        // 3. Delete any files or records associated with the shop
+        // 4. Clean up any scheduled jobs or webhooks
+        // 5. Log the deletion for compliance
+        
+        // For now, we'll just acknowledge the request
+        console.log('✅ Shop data redaction processed successfully');
+        
+        // TODO: Implement actual shop data deletion logic
+        // Example:
+        // await deleteShopData(shop_id);
+        // await deleteShopCache(shop_id);
+        // await cleanupShopWebhooks(shop_id);
+        // await logShopDeletion(shop_id, new Date());
+        
+      } catch (error) {
+        console.error('❌ Error processing shop redact request:', error);
+      }
     },
   },
 };

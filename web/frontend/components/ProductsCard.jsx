@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, TextContainer, Text } from "@shopify/polaris";
+import { Card, Text, Button, BlockStack, InlineStack, Badge, SkeletonDisplayText } from "@shopify/polaris";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
@@ -48,26 +48,39 @@ export function ProductsCard() {
   };
 
   return (
-    <Card
-      title={t("ProductsCard.title")}
-      sectioned
-      primaryFooterAction={{
-        content: t("ProductsCard.populateProductsButton", {
-          count: productsCount,
-        }),
-        onAction: handlePopulate,
-        loading: isPopulating,
-      }}
-    >
-      <TextContainer spacing="loose">
-        <p>{t("ProductsCard.description")}</p>
-        <Text as="h4" variant="headingMd">
-          {t("ProductsCard.totalProductsHeading")}
-          <Text variant="bodyMd" as="p" fontWeight="semibold">
-            {isLoadingCount ? "-" : data?.count}
+    <Card>
+      <BlockStack gap="400">
+        <InlineStack align="space-between" blockAlign="center">
+          <Text variant="headingMd" as="h2">{t("ProductsCard.title")}</Text>
+          <Badge status="info">Sample Component</Badge>
+        </InlineStack>
+        
+        <Text variant="bodyMd">{t("ProductsCard.description")}</Text>
+        
+        <BlockStack gap="200">
+          <Text variant="headingMd">
+            {t("ProductsCard.totalProductsHeading")}
           </Text>
-        </Text>
-      </TextContainer>
+          {isLoadingCount ? (
+            <SkeletonDisplayText size="large" />
+          ) : (
+            <Text variant="heading2xl" fontWeight="semibold">
+              {data?.count || 0}
+            </Text>
+          )}
+        </BlockStack>
+        
+        <Button
+          variant="primary"
+          onClick={handlePopulate}
+          loading={isPopulating}
+          size="large"
+        >
+          {t("ProductsCard.populateProductsButton", {
+            count: productsCount,
+          })}
+        </Button>
+      </BlockStack>
     </Card>
   );
 }

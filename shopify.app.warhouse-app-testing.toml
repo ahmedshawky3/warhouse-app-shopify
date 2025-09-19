@@ -1,27 +1,24 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "5933c2e4517c47713d3c7c90a7589721"
-name = "warhouse app testing"
-application_url = "https://plastics-extreme-inn-ultimate.trycloudflare.com"
+client_id = "2df1fafd21532086bcd358302ec7ea1f"
+name = "Warehouse Sync Manager"
+application_url = "https://reprint-maryland-code-previously.trycloudflare.com"
 embedded = true
-handle = "warhouse-app-testing"
+handle = "warehouse-sync-manager"
 
 [build]
 automatically_update_urls_on_dev = true
+include_config_on_deploy = true
 
 [webhooks]
 api_version = "2025-07"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_customers,read_inventory,read_orders,read_products,write_customers,write_inventory,write_orders,write_products"
+scopes = "read_customers,read_inventory,read_locations,read_orders,read_products,write_customers,write_inventory,write_orders,write_products"
 
 [auth]
-redirect_urls = [
-  "https://plastics-extreme-inn-ultimate.trycloudflare.com/auth/callback",
-  "https://plastics-extreme-inn-ultimate.trycloudflare.com/auth/shopify/callback",
-  "https://plastics-extreme-inn-ultimate.trycloudflare.com/api/auth/callback"
-]
+redirect_urls = ["https://reprint-maryland-code-previously.trycloudflare.com/auth/callback", "https://reprint-maryland-code-previously.trycloudflare.com/auth/shopify/callback", "https://reprint-maryland-code-previously.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false

@@ -1,5 +1,5 @@
 {
-  "name": "warhouse-app-testing",
+  "name": "warehouse-sync-manager",
   "version": "1.0.0",
   "main": "web/index.js",
   "license": "UNLICENSED",
