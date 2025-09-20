@@ -16,7 +16,6 @@ dotenv.config({ path: envPath });
 console.log('Environment variables loaded:');
 console.log('EXTERNAL_API_BASE_URL:', process.env.EXTERNAL_API_BASE_URL);
 console.log('SHOPIFY_API_KEY:', process.env.SHOPIFY_API_KEY);
-console.log('SHOPIFY_APP_URL:', process.env.SHOPIFY_APP_URL);
 
 import shopify from "./shopify.js";
 import PrivacyWebhookHandlers from "./privacy.js";

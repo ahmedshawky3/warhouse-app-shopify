@@ -2,7 +2,7 @@
 
 client_id = "2df1fafd21532086bcd358302ec7ea1f"
 name = "Warehouse Sync Manager"
-application_url = "https://reprint-maryland-code-previously.trycloudflare.com"
+application_url = "https://practical-longer-infinite-hearing.trycloudflare.com"
 embedded = true
 handle = "warehouse-sync-manager"
 
@@ -18,7 +18,7 @@ api_version = "2025-07"
 scopes = "read_customers,read_inventory,read_locations,read_orders,read_products,write_customers,write_inventory,write_orders,write_products"
 
 [auth]
-redirect_urls = ["https://reprint-maryland-code-previously.trycloudflare.com/auth/callback", "https://reprint-maryland-code-previously.trycloudflare.com/auth/shopify/callback", "https://reprint-maryland-code-previously.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://practical-longer-infinite-hearing.trycloudflare.com/auth/callback", "https://practical-longer-infinite-hearing.trycloudflare.com/auth/shopify/callback", "https://practical-longer-infinite-hearing.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false

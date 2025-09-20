@@ -20,6 +20,7 @@ export default {
         console.log('🛒 New order created:', orderData.name);
         
         // Get the external API endpoint from environment or config
+        // This is where we send the order data TO your external system (e.g., Odoo, ERP)
         const externalEndpoint = ORDER_SYNC_ENDPOINT;
         
         // Transform order data to match our sync format
@@ -130,6 +131,7 @@ export default {
         console.log('📝 Order updated:', orderData.name);
         
         // Get the external API endpoint from environment or config
+        // This is where we send the order data TO your external system (e.g., Odoo, ERP)
         const externalEndpoint = ORDER_SYNC_ENDPOINT;
         
         // Transform order data to match our sync format

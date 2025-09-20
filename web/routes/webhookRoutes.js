@@ -2,7 +2,8 @@
 import express from "express";
 import { 
   registerWebhooks, 
-  testWebhook 
+  testWebhook,
+  getConfig
 } from "../controllers/webhookController.js";
 
 const router = express.Router();
@@ -10,5 +11,6 @@ const router = express.Router();
 // Webhook routes
 router.post("/register", registerWebhooks);
 router.get("/test", testWebhook);
+router.get("/config", getConfig);
 
 export default router;

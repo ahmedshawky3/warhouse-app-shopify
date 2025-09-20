@@ -10,13 +10,14 @@ const envPath = join(__dirname, '..', '..', '.env');
 dotenv.config({ path: envPath });
 
 // Global configuration variables - get from environment
+// EXTERNAL_API_BASE_URL should be your external system (e.g., Odoo, ERP, etc.) - NOT your Shopify app URL
 let EXTERNAL_API_BASE_URL = process.env.EXTERNAL_API_BASE_URL;
 
-// Validate required environment variables
+// Provide a default external API URL for development/testing
 if (!EXTERNAL_API_BASE_URL) {
-  console.error('❌ EXTERNAL_API_BASE_URL environment variable is required!');
-  console.error('Please set EXTERNAL_API_BASE_URL in your environment variables.');
-  throw new Error('EXTERNAL_API_BASE_URL environment variable is required');
+  console.warn('⚠️ EXTERNAL_API_BASE_URL not set - using default test URL');
+  console.warn('⚠️ Set EXTERNAL_API_BASE_URL to your actual external system URL (e.g., Odoo, ERP)');
+  EXTERNAL_API_BASE_URL = 'https://your-external-system.com'; // Replace with your actual external system URL
 }
 
 export { EXTERNAL_API_BASE_URL };

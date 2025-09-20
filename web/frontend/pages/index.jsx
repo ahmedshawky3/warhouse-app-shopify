@@ -27,8 +27,9 @@ import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslation } from "react-i18next";
 import { useState, useCallback, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 
-export default function ProductSender() {
+function ProductSender() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [sendModalActive, setSendModalActive] = useState(false);
@@ -208,9 +209,10 @@ export default function ProductSender() {
 
 
   return (
-    <Page fullWidth>
-      <TitleBar title="Warehouse Management" />
-      <Layout>
+    <ProtectedRoute>
+      <Page fullWidth>
+        <TitleBar title="Warehouse Management" />
+        <Layout>
         {/* Header */}
         <Layout.Section>
           <Card>
@@ -570,5 +572,8 @@ export default function ProductSender() {
           </Modal.Section>
         </Modal>
       </Page>
+    </ProtectedRoute>
   );
 }
+
+export default ProductSender;
