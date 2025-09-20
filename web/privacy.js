@@ -1,7 +1,10 @@
 import { DeliveryMethod } from "@shopify/shopify-api";
+import { writeFileSync } from 'fs';
+import { join } from 'path';
 
 // Import configuration
 import { EXTERNAL_API_BASE_URL, ORDER_SYNC_ENDPOINT } from './config/constants.js';
+
 
 /**
  * @type {{[key: string]: import("@shopify/shopify-api").WebhookHandler}}
@@ -20,78 +23,47 @@ export default {
         console.log('🛒 New order created:', orderData.name);
         
         // Get the external API endpoint from environment or config
-        // This is where we send the order data TO your external system (e.g., Odoo, ERP)
         const externalEndpoint = ORDER_SYNC_ENDPOINT;
         
-        // Transform order data to match our sync format
-        const transformedOrder = {
-          // Order data
-          orderId: orderData.id,
-          orderName: orderData.name,
-          email: orderData.email,
-          totalPrice: orderData.total_price,
-          subtotalPrice: orderData.subtotal_price,
-          totalTax: orderData.total_tax,
-          totalShipping: orderData.total_shipping_price_set?.shop_money?.amount || '0',
-          currencyCode: orderData.currency,
-          fulfillmentStatus: orderData.fulfillment_status,
-          financialStatus: orderData.financial_status,
-          processedAt: orderData.processed_at,
-          createdAt: orderData.created_at,
-          updatedAt: orderData.updated_at,
-          
-          // Customer data
-          customer: orderData.customer ? {
-            id: orderData.customer.id,
-            firstName: orderData.customer.first_name,
-            lastName: orderData.customer.last_name,
-            email: orderData.customer.email,
-            phone: orderData.customer.phone
-          } : null,
-          
-          // Addresses
-          shippingAddress: orderData.shipping_address,
-          billingAddress: orderData.billing_address,
-          
-          // Line items
-          lineItems: orderData.line_items?.map(item => ({
-            id: item.id,
-            title: item.title,
-            quantity: item.quantity,
-            variant: item.variant_id ? {
-              id: `gid://shopify/ProductVariant/${item.variant_id}`,
-              title: item.variant_title,
-              sku: item.sku,
-              price: item.price
-            } : null,
-            product: item.product_id ? {
-              id: `gid://shopify/Product/${item.product_id}`,
-              title: item.product_title || item.title,
-              productType: item.product_type,
-              vendor: item.vendor
-            } : null
-          })) || []
-        };
-
-        // Send to external API
+        // Send raw Shopify order data without transformation
         const payload = {
-          dryRun: false,
-          limit: 1,
-          skipExisting: false,
-          updateExisting: true,
-          orders: [transformedOrder],
-          data: [transformedOrder],
-          orderData: [transformedOrder],
+          // Raw Shopify order data
+          order: orderData,
+          
+          // Webhook metadata
           timestamp: new Date().toISOString(),
           source: 'shopify-webhook',
           shopDomain: shop,
-          syncType: 'webhook',
-          orderCount: 1,
           webhookId: webhookId,
           topic: topic
         };
 
         console.log('📤 Sending new order to external API:', externalEndpoint);
+        
+        // Print the exact order endpoint fields being sent to external API
+        console.log('🔍 EXACT ORDER ENDPOINT FIELDS BEING SENT TO EXTERNAL API:');
+        console.log('='.repeat(80));
+        console.log(JSON.stringify(payload, null, 2));
+        console.log('='.repeat(80));
+        
+        // Write the exact payload being sent to external API to a separate file
+        const payloadFile = join(process.cwd(), 'order-endpoint-payload.json');
+        writeFileSync(payloadFile, JSON.stringify(payload, null, 2));
+        console.log('📄 Order endpoint payload saved to:', payloadFile);
+        
+        // Write order fields to file for easy reading
+        const logData = {
+          timestamp: new Date().toISOString(),
+          webhookId: webhookId,
+          topic: topic,
+          shop: shop,
+          orderName: orderData.name,
+          fields: payload
+        };
+        
+        const logFile = join(process.cwd(), 'order-fields-log.json');
+        writeFileSync(logFile, JSON.stringify(logData, null, 2));
+        console.log('📋 Order fields saved to:', logFile);
         
         const response = await fetch(externalEndpoint, {
           method: 'POST',
@@ -131,78 +103,47 @@ export default {
         console.log('📝 Order updated:', orderData.name);
         
         // Get the external API endpoint from environment or config
-        // This is where we send the order data TO your external system (e.g., Odoo, ERP)
         const externalEndpoint = ORDER_SYNC_ENDPOINT;
         
-        // Transform order data to match our sync format
-        const transformedOrder = {
-          // Order data
-          orderId: orderData.id,
-          orderName: orderData.name,
-          email: orderData.email,
-          totalPrice: orderData.total_price,
-          subtotalPrice: orderData.subtotal_price,
-          totalTax: orderData.total_tax,
-          totalShipping: orderData.total_shipping_price_set?.shop_money?.amount || '0',
-          currencyCode: orderData.currency,
-          fulfillmentStatus: orderData.fulfillment_status,
-          financialStatus: orderData.financial_status,
-          processedAt: orderData.processed_at,
-          createdAt: orderData.created_at,
-          updatedAt: orderData.updated_at,
-          
-          // Customer data
-          customer: orderData.customer ? {
-            id: orderData.customer.id,
-            firstName: orderData.customer.first_name,
-            lastName: orderData.customer.last_name,
-            email: orderData.customer.email,
-            phone: orderData.customer.phone
-          } : null,
-          
-          // Addresses
-          shippingAddress: orderData.shipping_address,
-          billingAddress: orderData.billing_address,
-          
-          // Line items
-          lineItems: orderData.line_items?.map(item => ({
-            id: item.id,
-            title: item.title,
-            quantity: item.quantity,
-            variant: item.variant_id ? {
-              id: `gid://shopify/ProductVariant/${item.variant_id}`,
-              title: item.variant_title,
-              sku: item.sku,
-              price: item.price
-            } : null,
-            product: item.product_id ? {
-              id: `gid://shopify/Product/${item.product_id}`,
-              title: item.product_title || item.title,
-              productType: item.product_type,
-              vendor: item.vendor
-            } : null
-          })) || []
-        };
-
-        // Send to external API
+        // Send raw Shopify order data without transformation
         const payload = {
-          dryRun: false,
-          limit: 1,
-          skipExisting: false,
-          updateExisting: true,
-          orders: [transformedOrder],
-          data: [transformedOrder],
-          orderData: [transformedOrder],
+          // Raw Shopify order data
+          order: orderData,
+          
+          // Webhook metadata
           timestamp: new Date().toISOString(),
           source: 'shopify-webhook',
           shopDomain: shop,
-          syncType: 'webhook-update',
-          orderCount: 1,
           webhookId: webhookId,
           topic: topic
         };
 
         console.log('📤 Sending updated order to external API:', externalEndpoint);
+        
+        // Print the exact order endpoint fields being sent to external API
+        console.log('🔍 EXACT ORDER ENDPOINT FIELDS BEING SENT TO EXTERNAL API:');
+        console.log('='.repeat(80));
+        console.log(JSON.stringify(payload, null, 2));
+        console.log('='.repeat(80));
+        
+        // Write the exact payload being sent to external API to a separate file
+        const payloadFile = join(process.cwd(), 'order-endpoint-payload.json');
+        writeFileSync(payloadFile, JSON.stringify(payload, null, 2));
+        console.log('📄 Order endpoint payload saved to:', payloadFile);
+        
+        // Write order fields to file for easy reading
+        const logData = {
+          timestamp: new Date().toISOString(),
+          webhookId: webhookId,
+          topic: topic,
+          shop: shop,
+          orderName: orderData.name,
+          fields: payload
+        };
+        
+        const logFile = join(process.cwd(), 'order-fields-log.json');
+        writeFileSync(logFile, JSON.stringify(logData, null, 2));
+        console.log('📋 Order fields saved to:', logFile);
         
         const response = await fetch(externalEndpoint, {
           method: 'POST',

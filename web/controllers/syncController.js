@@ -231,23 +231,20 @@ export const sendProducts = async (req, res) => {
       });
     }
 
-    // Prepare payload for external API
+    // Prepare payload for external API - send flattened variants
     const payload = {
+      // Sync metadata
+      sync: {
+        shopDomain: shop,
+        syncType: sendMode,
+        dryRun: false,
+        selectedProductIds: sendMode === "selected" ? selectedProductIds : [],
+        timestamp: new Date().toISOString()
+      },
+      // Flattened variants data
       products: productsToSend, // Now a flat array of variants
-      shopDomain: shop, // External API expects this field name
-      syncType: sendMode, // External API expects 'syncType' instead of 'sendMode'
-      dryRun: false,
-      selectedProductIds: sendMode === "selected" ? selectedProductIds : [],
-      // Keep additional fields for backward compatibility
-      data: productsToSend,
-      sendMode,
-      shop,
-      shopifySession: res.locals.shopify?.session ? {
-        shop: res.locals.shopify.session.shop,
-        accessToken: res.locals.shopify.session.accessToken,
-        scope: res.locals.shopify.session.scope
-      } : null,
-      timestamp: new Date().toISOString()
+      variants: productsToSend, // Alternative key for backward compatibility
+      data: productsToSend
     };
 
     // Log payload structure for debugging
@@ -322,17 +319,20 @@ export const externalSyncProducts = async (req, res) => {
       });
     }
 
-    // Forward to external API
+    // Forward to external API - send variant structure
     const payload = {
-      shopDomain,
-      accessToken,
-      syncType,
-      selectedProductIds,
-      // Add empty variants array to satisfy external API requirements
-      variants: [],
-      data: [],
+      // Sync metadata
+      sync: {
+        shopDomain,
+        accessToken,
+        syncType,
+        selectedProductIds,
+        timestamp: new Date().toISOString()
+      },
+      // Flattened variants data (empty for external sync)
       products: [],
-      timestamp: new Date().toISOString()
+      variants: [],
+      data: []
     };
 
     const response = await fetch(PRODUCT_SYNC_ENDPOINT, {

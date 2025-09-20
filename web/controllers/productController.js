@@ -116,7 +116,7 @@ export const getProducts = async (req, res) => {
       });
     }
 
-    // Flatten variants with product context
+    // Flatten variants with product context (for frontend display)
     const variants = response.data.products.edges.flatMap(edge => {
       // Skip products with no variants
       if (!edge.node.variants?.edges || edge.node.variants.edges.length === 0) {

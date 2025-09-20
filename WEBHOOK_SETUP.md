@@ -48,6 +48,10 @@ When you register webhooks, they will be registered with:
 - **Callback URL**: `${APP_URL}/api/webhooks` (where Shopify sends webhooks - dynamically read from TOML)
 - **Processing**: Your app receives webhooks and sends data to `${EXTERNAL_API_BASE_URL}/api/receive-orders`
 
+### Product Sync Endpoints
+
+- **Product Sync**: Your app sends product data to `${EXTERNAL_API_BASE_URL}/api/shopify/send/products`
+
 ## Testing
 
 1. **Check current configuration**:
@@ -89,6 +93,8 @@ When you register webhooks, they will be registered with:
 
 - **App URL**: Dynamically read from TOML config (for receiving webhooks)
 - **External API URL**: Set via `EXTERNAL_API_BASE_URL` env var (for sending data to your system)
+- **Order Webhook Endpoint**: `${EXTERNAL_API_BASE_URL}/api/receive-orders`
+- **Product Sync Endpoint**: `${EXTERNAL_API_BASE_URL}/api/shopify/send/products`
 
 ## Development Workflow
 

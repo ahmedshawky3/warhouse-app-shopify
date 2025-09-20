@@ -22,9 +22,9 @@ if (!EXTERNAL_API_BASE_URL) {
 
 export { EXTERNAL_API_BASE_URL };
 
-export const ORDER_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/receive-orders`;
+export const ORDER_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/shopify/receive/orders`;
 export const SKU_QUANTITIES_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/skus/quantities`;
-export const PRODUCT_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/send-products`;
+export const PRODUCT_SYNC_ENDPOINT = `${EXTERNAL_API_BASE_URL}/api/shopify/receive/products`;
 
 // Log configuration for debugging
 console.log('🔧 External API Configuration:');

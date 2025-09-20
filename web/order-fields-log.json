@@ -1,0 +1,3152 @@
+{
+  "timestamp": "2025-09-20T11:19:59.086Z",
+  "webhookId": "a359960c-d251-490d-b3e1-33076b29e69d",
+  "topic": "ORDERS_UPDATED",
+  "shop": "test-warehouse-app1.myshopify.com",
+  "orderName": "#1022",
+  "fields": {
+    "order": {
+      "id": 6792835563815,
+      "admin_graphql_api_id": "gid://shopify/Order/6792835563815",
+      "app_id": 1354745,
+      "browser_ip": "102.45.53.65",
+      "buyer_accepts_marketing": false,
+      "cancel_reason": null,
+      "cancelled_at": null,
+      "cart_token": null,
+      "checkout_id": 39789950402855,
+      "checkout_token": "72c3aecf27894861309d3a1fb9f5497e",
+      "client_details": {
+        "accept_language": null,
+        "browser_height": null,
+        "browser_ip": "102.45.53.65",
+        "browser_width": null,
+        "session_hash": null,
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+      },
+      "closed_at": null,
+      "company": null,
+      "confirmation_number": "YVRJNNGWU",
+      "confirmed": true,
+      "contact_email": "ahmed.shawki012@gmail.com",
+      "created_at": "2025-09-20T03:33:44-04:00",
+      "currency": "EGP",
+      "current_shipping_price_set": {
+        "shop_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        }
+      },
+      "current_subtotal_price": "60.00",
+      "current_subtotal_price_set": {
+        "shop_money": {
+          "amount": "60.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "60.00",
+          "currency_code": "EGP"
+        }
+      },
+      "current_total_additional_fees_set": null,
+      "current_total_discounts": "0.00",
+      "current_total_discounts_set": {
+        "shop_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        }
+      },
+      "current_total_duties_set": null,
+      "current_total_price": "68.40",
+      "current_total_price_set": {
+        "shop_money": {
+          "amount": "68.40",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "68.40",
+          "currency_code": "EGP"
+        }
+      },
+      "current_total_tax": "8.40",
+      "current_total_tax_set": {
+        "shop_money": {
+          "amount": "8.40",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "8.40",
+          "currency_code": "EGP"
+        }
+      },
+      "customer_locale": "en",
+      "device_id": null,
+      "discount_codes": [],
+      "duties_included": false,
+      "email": "ahmed.shawki012@gmail.com",
+      "estimated_taxes": false,
+      "financial_status": "partially_paid",
+      "fulfillment_status": null,
+      "landing_site": null,
+      "landing_site_ref": null,
+      "location_id": null,
+      "merchant_business_entity_id": "28522021159",
+      "merchant_of_record_app_id": null,
+      "name": "#1022",
+      "note": null,
+      "note_attributes": [],
+      "number": 22,
+      "order_number": 1022,
+      "order_status_url": "https://test-warehouse-app1.myshopify.com/95199559975/orders/fe92bed76bc25bb77d2b0dcc90737ca3/authenticate?key=a8a89ded9cb1a27e46a765e51b364829",
+      "original_total_additional_fees_set": null,
+      "original_total_duties_set": null,
+      "payment_gateway_names": [
+        "manual"
+      ],
+      "phone": "+201005569688",
+      "po_number": null,
+      "presentment_currency": "EGP",
+      "processed_at": "2025-09-20T03:33:44-04:00",
+      "reference": null,
+      "referring_site": null,
+      "source_identifier": null,
+      "source_name": "shopify_draft_order",
+      "source_url": null,
+      "subtotal_price": "300.00",
+      "subtotal_price_set": {
+        "shop_money": {
+          "amount": "300.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "300.00",
+          "currency_code": "EGP"
+        }
+      },
+      "tags": "",
+      "tax_exempt": false,
+      "tax_lines": [
+        {
+          "price": "42.00",
+          "rate": 0.14,
+          "title": "GST",
+          "price_set": {
+            "shop_money": {
+              "amount": "42.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "42.00",
+              "currency_code": "EGP"
+            }
+          },
+          "channel_liable": false
+        }
+      ],
+      "taxes_included": false,
+      "test": false,
+      "token": "fe92bed76bc25bb77d2b0dcc90737ca3",
+      "total_cash_rounding_payment_adjustment_set": {
+        "shop_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        }
+      },
+      "total_cash_rounding_refund_adjustment_set": {
+        "shop_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        }
+      },
+      "total_discounts": "0.00",
+      "total_discounts_set": {
+        "shop_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        }
+      },
+      "total_line_items_price": "300.00",
+      "total_line_items_price_set": {
+        "shop_money": {
+          "amount": "300.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "300.00",
+          "currency_code": "EGP"
+        }
+      },
+      "total_outstanding": "41.04",
+      "total_price": "342.00",
+      "total_price_set": {
+        "shop_money": {
+          "amount": "342.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "342.00",
+          "currency_code": "EGP"
+        }
+      },
+      "total_shipping_price_set": {
+        "shop_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "0.00",
+          "currency_code": "EGP"
+        }
+      },
+      "total_tax": "42.00",
+      "total_tax_set": {
+        "shop_money": {
+          "amount": "42.00",
+          "currency_code": "EGP"
+        },
+        "presentment_money": {
+          "amount": "42.00",
+          "currency_code": "EGP"
+        }
+      },
+      "total_tip_received": "0.00",
+      "total_weight": 0,
+      "updated_at": "2025-09-20T05:19:37-04:00",
+      "user_id": 120865423655,
+      "billing_address": {
+        "first_name": "Ahmed",
+        "address1": "asdfg",
+        "phone": "+201001928680",
+        "city": "add",
+        "zip": "121223",
+        "province": "Cairo",
+        "country": "Egypt",
+        "last_name": "shawky",
+        "address2": "asdf",
+        "company": "adfdg",
+        "latitude": 30.0444196,
+        "longitude": 31.2357116,
+        "name": "Ahmed shawky",
+        "country_code": "EG",
+        "province_code": "C"
+      },
+      "customer": {
+        "id": 9176547983655,
+        "created_at": "2025-09-19T20:49:46-04:00",
+        "updated_at": "2025-09-20T05:18:15-04:00",
+        "first_name": "Ahmed",
+        "last_name": "shawky",
+        "state": "disabled",
+        "note": "",
+        "verified_email": true,
+        "multipass_identifier": null,
+        "tax_exempt": false,
+        "email": "ahmed.shawki012@gmail.com",
+        "phone": "+201005569688",
+        "currency": "EGP",
+        "tax_exemptions": [],
+        "admin_graphql_api_id": "gid://shopify/Customer/9176547983655",
+        "default_address": {
+          "id": 11011109912871,
+          "customer_id": 9176547983655,
+          "first_name": "Ahmed",
+          "last_name": "shawky",
+          "company": "adfdg",
+          "address1": "asdfg",
+          "address2": "asdf",
+          "city": "add",
+          "province": "Cairo",
+          "country": "Egypt",
+          "zip": "121223",
+          "phone": "+201001928680",
+          "name": "Ahmed shawky",
+          "province_code": "C",
+          "country_code": "EG",
+          "country_name": "Egypt",
+          "default": true
+        }
+      },
+      "discount_applications": [],
+      "fulfillments": [],
+      "line_items": [
+        {
+          "id": 16885437137191,
+          "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+          "attributed_staffs": [],
+          "current_quantity": 2,
+          "fulfillable_quantity": 2,
+          "fulfillment_service": "manual",
+          "fulfillment_status": null,
+          "gift_card": false,
+          "grams": 0,
+          "name": "t-shirt - Gold / S",
+          "price": "12.00",
+          "price_set": {
+            "shop_money": {
+              "amount": "12.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "12.00",
+              "currency_code": "EGP"
+            }
+          },
+          "product_exists": true,
+          "product_id": 9934781940007,
+          "properties": [],
+          "quantity": 22,
+          "requires_shipping": true,
+          "sales_line_item_group_id": null,
+          "sku": "tets2122",
+          "taxable": true,
+          "title": "t-shirt",
+          "total_discount": "0.00",
+          "total_discount_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "variant_id": 50433878786343,
+          "variant_inventory_management": "shopify",
+          "variant_title": "Gold / S",
+          "vendor": "Test-warehouse-app1",
+          "tax_lines": [
+            {
+              "channel_liable": false,
+              "price": "1.68",
+              "price_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            },
+            {
+              "channel_liable": false,
+              "price": "18.48",
+              "price_set": {
+                "shop_money": {
+                  "amount": "18.48",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "18.48",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            },
+            {
+              "channel_liable": false,
+              "price": "1.68",
+              "price_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            },
+            {
+              "channel_liable": false,
+              "price": "1.68",
+              "price_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            },
+            {
+              "channel_liable": false,
+              "price": "1.68",
+              "price_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            },
+            {
+              "channel_liable": false,
+              "price": "1.68",
+              "price_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            },
+            {
+              "channel_liable": false,
+              "price": "6.72",
+              "price_set": {
+                "shop_money": {
+                  "amount": "6.72",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "6.72",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            },
+            {
+              "channel_liable": false,
+              "price": "3.36",
+              "price_set": {
+                "shop_money": {
+                  "amount": "3.36",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "3.36",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            }
+          ],
+          "duties": [],
+          "discount_allocations": []
+        },
+        {
+          "id": 16885437169959,
+          "admin_graphql_api_id": "gid://shopify/LineItem/16885437169959",
+          "attributed_staffs": [],
+          "current_quantity": 3,
+          "fulfillable_quantity": 3,
+          "fulfillment_service": "manual",
+          "fulfillment_status": null,
+          "gift_card": false,
+          "grams": 0,
+          "name": "t-shirt - Green / XS",
+          "price": "12.00",
+          "price_set": {
+            "shop_money": {
+              "amount": "12.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "12.00",
+              "currency_code": "EGP"
+            }
+          },
+          "product_exists": true,
+          "product_id": 9934781940007,
+          "properties": [],
+          "quantity": 3,
+          "requires_shipping": true,
+          "sales_line_item_group_id": null,
+          "sku": "tets2123",
+          "taxable": true,
+          "title": "t-shirt",
+          "total_discount": "0.00",
+          "total_discount_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "variant_id": 50433878819111,
+          "variant_inventory_management": "shopify",
+          "variant_title": "Green / XS",
+          "vendor": "Test-warehouse-app1",
+          "tax_lines": [
+            {
+              "channel_liable": false,
+              "price": "1.68",
+              "price_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            },
+            {
+              "channel_liable": false,
+              "price": "1.68",
+              "price_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            },
+            {
+              "channel_liable": false,
+              "price": "1.68",
+              "price_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "rate": 0.14,
+              "title": "GST"
+            }
+          ],
+          "duties": [],
+          "discount_allocations": []
+        }
+      ],
+      "payment_terms": null,
+      "refunds": [
+        {
+          "id": 1013889696039,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013889696039",
+          "created_at": "2025-09-20T03:44:37-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T03:44:37-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645077106983,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 1,
+              "restock_type": "cancel",
+              "subtotal": 12,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 1.68,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013889859879,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013889859879",
+          "created_at": "2025-09-20T03:46:23-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T03:46:23-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645077270823,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 1,
+              "restock_type": "cancel",
+              "subtotal": 12,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 1.68,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013889958183,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013889958183",
+          "created_at": "2025-09-20T03:48:25-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T03:48:25-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645077369127,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 1,
+              "restock_type": "cancel",
+              "subtotal": 12,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 1.68,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013890023719,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013890023719",
+          "created_at": "2025-09-20T03:51:06-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T03:51:06-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645077434663,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 4,
+              "restock_type": "cancel",
+              "subtotal": 48,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "48.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "48.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 6.72,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "6.72",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "6.72",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013890154791,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013890154791",
+          "created_at": "2025-09-20T03:58:08-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T03:58:08-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645077532967,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 1,
+              "restock_type": "cancel",
+              "subtotal": 12,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 1.68,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013890384167,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013890384167",
+          "created_at": "2025-09-20T04:04:02-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T04:04:02-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645077631271,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 1,
+              "restock_type": "cancel",
+              "subtotal": 12,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 1.68,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013890449703,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013890449703",
+          "created_at": "2025-09-20T04:05:55-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T04:05:55-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645077729575,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 1,
+              "restock_type": "cancel",
+              "subtotal": 12,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 1.68,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013890941223,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013890941223",
+          "created_at": "2025-09-20T04:28:19-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T04:28:19-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645078614311,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 1,
+              "restock_type": "cancel",
+              "subtotal": 12,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 1.68,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013893660967,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013893660967",
+          "created_at": "2025-09-20T05:16:03-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T05:16:03-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645081202983,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 4,
+              "restock_type": "cancel",
+              "subtotal": 48,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "48.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "48.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 6.72,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "6.72",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "6.72",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013893923111,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013893923111",
+          "created_at": "2025-09-20T05:17:39-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T05:17:39-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645081596199,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 4,
+              "restock_type": "cancel",
+              "subtotal": 48,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "48.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "48.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 6.72,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "6.72",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "6.72",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        },
+        {
+          "id": 1013894021415,
+          "admin_graphql_api_id": "gid://shopify/Refund/1013894021415",
+          "created_at": "2025-09-20T05:19:37-04:00",
+          "note": null,
+          "order_id": 6792835563815,
+          "processed_at": "2025-09-20T05:19:37-04:00",
+          "restock": true,
+          "total_duties_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "EGP"
+            }
+          },
+          "user_id": 120865423655,
+          "order_adjustments": [],
+          "transactions": [],
+          "refund_line_items": [
+            {
+              "id": 645081694503,
+              "line_item_id": 16885437137191,
+              "location_id": 108184731943,
+              "quantity": 1,
+              "restock_type": "cancel",
+              "subtotal": 12,
+              "subtotal_set": {
+                "shop_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "12.00",
+                  "currency_code": "EGP"
+                }
+              },
+              "total_tax": 1.68,
+              "total_tax_set": {
+                "shop_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                },
+                "presentment_money": {
+                  "amount": "1.68",
+                  "currency_code": "EGP"
+                }
+              },
+              "line_item": {
+                "id": 16885437137191,
+                "admin_graphql_api_id": "gid://shopify/LineItem/16885437137191",
+                "attributed_staffs": [],
+                "current_quantity": 2,
+                "fulfillable_quantity": 2,
+                "fulfillment_service": "manual",
+                "fulfillment_status": null,
+                "gift_card": false,
+                "grams": 0,
+                "name": "t-shirt - Gold / S",
+                "price": "12.00",
+                "price_set": {
+                  "shop_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "12.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "product_exists": true,
+                "product_id": 9934781940007,
+                "properties": [],
+                "quantity": 22,
+                "requires_shipping": true,
+                "sku": "tets2122",
+                "taxable": true,
+                "title": "t-shirt",
+                "total_discount": "0.00",
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "EGP"
+                  }
+                },
+                "variant_id": 50433878786343,
+                "variant_inventory_management": "shopify",
+                "variant_title": "Gold / S",
+                "vendor": "Test-warehouse-app1",
+                "tax_lines": [
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "18.48",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "18.48",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "1.68",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "1.68",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "6.72",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "6.72",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  },
+                  {
+                    "channel_liable": false,
+                    "price": "3.36",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      },
+                      "presentment_money": {
+                        "amount": "3.36",
+                        "currency_code": "EGP"
+                      }
+                    },
+                    "rate": 0.14,
+                    "title": "GST"
+                  }
+                ],
+                "duties": [],
+                "discount_allocations": []
+              }
+            }
+          ],
+          "duties": []
+        }
+      ],
+      "shipping_address": {
+        "first_name": "Ahmed",
+        "address1": "asdfg",
+        "phone": "+201001928680",
+        "city": "add",
+        "zip": "121223",
+        "province": "Cairo",
+        "country": "Egypt",
+        "last_name": "shawky",
+        "address2": "asdf",
+        "company": "adfdg",
+        "latitude": 30.0444196,
+        "longitude": 31.2357116,
+        "name": "Ahmed shawky",
+        "country_code": "EG",
+        "province_code": "C"
+      },
+      "shipping_lines": [],
+      "returns": []
+    },
+    "timestamp": "2025-09-20T11:19:59.073Z",
+    "source": "shopify-webhook",
+    "shopDomain": "test-warehouse-app1.myshopify.com",
+    "webhookId": "a359960c-d251-490d-b3e1-33076b29e69d",
+    "topic": "ORDERS_UPDATED"
+  }
+}

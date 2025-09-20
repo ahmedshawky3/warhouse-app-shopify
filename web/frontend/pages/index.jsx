@@ -113,7 +113,9 @@ function ProductSender() {
       console.log('Current URL:', window.location.href);
       
       // Now send to external API with complete data
-      const response = await fetch("/api/sync/send-products", {
+      const url = `/api/shopify/sync/products?shop=${encodeURIComponent(shopDomain)}`;
+      
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

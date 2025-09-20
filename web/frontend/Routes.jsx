@@ -34,7 +34,7 @@ export default function Routes({ pages }) {
   console.log("NotFound component:", !!NotFound);
 
   return (
-    <ReactRouterRoutes future={{ v7_startTransition: true }}>
+    <ReactRouterRoutes future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       {routeComponents}
       <Route path="/exitiframe" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFound />} />

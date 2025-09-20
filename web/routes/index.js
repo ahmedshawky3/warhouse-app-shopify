@@ -11,7 +11,7 @@ const router = express.Router();
 // Mount route modules
 router.use("/products", productRoutes);
 router.use("/orders", orderRoutes);
-router.use("/sync", syncRoutes);
+router.use("/shopify/sync", syncRoutes);
 router.use("/skus", skuRoutes);
 router.use("/webhooks", webhookRoutes);
 
