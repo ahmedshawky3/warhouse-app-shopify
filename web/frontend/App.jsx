@@ -1,14 +1,24 @@
 import { BrowserRouter } from "react-router-dom";
 import Routes from "./Routes";
-import { Spinner, Page, BlockStack, InlineStack, Text, Banner } from "@shopify/polaris";
+import { Spinner, Page, BlockStack, InlineStack, Text } from "@shopify/polaris";
 
 import { QueryProvider, PolarisProvider } from "./components";
-import { useAuth } from "./hooks/useAuth";
+import { useState, useEffect } from "react";
 
 export default function App() {
-  const { isAuthenticated, isLoading, error } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Show loading spinner while checking authentication
+  useEffect(() => {
+    // Simple loading state - authentication is handled by backend middleware
+    // If user reaches this component, they are already authenticated
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300); // Brief loading state for smooth UX
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading spinner briefly
   if (isLoading) {
     return (
       <PolarisProvider>
@@ -17,37 +27,6 @@ export default function App() {
             <InlineStack align="center" gap="300">
               <Spinner accessibilityLabel="Loading" size="large" />
               <Text variant="headingMd">Loading app...</Text>
-            </InlineStack>
-          </BlockStack>
-        </Page>
-      </PolarisProvider>
-    );
-  }
-
-  // Show error if authentication failed
-  if (error) {
-    return (
-      <PolarisProvider>
-        <Page>
-          <BlockStack align="center" gap="400">
-            <Banner status="critical" title="Authentication Error">
-              <Text variant="bodyMd">{error}</Text>
-            </Banner>
-          </BlockStack>
-        </Page>
-      </PolarisProvider>
-    );
-  }
-
-  // Show loading if not authenticated (OAuth redirect should happen)
-  if (!isAuthenticated) {
-    return (
-      <PolarisProvider>
-        <Page>
-          <BlockStack align="center" gap="400">
-            <InlineStack align="center" gap="300">
-              <Spinner accessibilityLabel="Authenticating" size="large" />
-              <Text variant="headingMd">Authenticating with Shopify...</Text>
             </InlineStack>
           </BlockStack>
         </Page>

@@ -46,7 +46,7 @@ EXTERNAL_API_BASE_URL=https://your-external-system.com
 When you register webhooks, they will be registered with:
 
 - **Callback URL**: `${APP_URL}/api/webhooks` (where Shopify sends webhooks - dynamically read from TOML)
-- **Processing**: Your app receives webhooks and sends data to `${EXTERNAL_API_BASE_URL}/api/receive-orders`
+- **Processing**: Your app receives webhooks and sends data to `${EXTERNAL_API_BASE_URL}/api/shopify/sync/receive/orders`
 
 ## Testing
 
