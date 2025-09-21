@@ -26,6 +26,27 @@ export const getOrders = async (req, res) => {
                 lastName
                 email
               }
+              lineItems(first: 100) {
+                edges {
+                  node {
+                    id
+                    title
+                    quantity
+                    variant {
+                      id
+                      title
+                      sku
+                      price
+                    }
+                    product {
+                      id
+                      title
+                      productType
+                      vendor
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -34,15 +55,40 @@ export const getOrders = async (req, res) => {
       variables: { first: 20 }
     });
 
-    const orders = response.data.orders.edges.map(edge => ({
-      id: edge.node.name,
-      customer: edge.node.customer ? 
-        `${edge.node.customer.firstName} ${edge.node.customer.lastName}` : 
-        'Guest Customer',
-      total: `$${parseFloat(edge.node.totalPrice).toFixed(2)}`,
-      status: edge.node.fulfillmentStatus || 'UNFULFILLED',
-      date: new Date(edge.node.createdAt).toLocaleDateString()
-    }));
+    const orders = response.data.orders.edges.map(edge => {
+      // Calculate total item count from line items
+      const totalItems = edge.node.lineItems.edges.reduce((sum, item) => {
+        return sum + item.node.quantity;
+      }, 0);
+
+      return {
+        id: edge.node.name,
+        customer: edge.node.customer ? 
+          `${edge.node.customer.firstName} ${edge.node.customer.lastName}` : 
+          'Guest Customer',
+        total: `$${parseFloat(edge.node.totalPrice).toFixed(2)}`,
+        status: edge.node.fulfillmentStatus || 'UNFULFILLED',
+        date: new Date(edge.node.createdAt).toLocaleDateString(),
+        itemCount: totalItems,
+        lineItems: edge.node.lineItems.edges.map(item => ({
+          id: item.node.id,
+          title: item.node.title,
+          quantity: item.node.quantity,
+          variant: item.node.variant ? {
+            id: item.node.variant.id,
+            title: item.node.variant.title,
+            sku: item.node.variant.sku,
+            price: item.node.variant.price
+          } : null,
+          product: item.node.product ? {
+            id: item.node.product.id,
+            title: item.node.product.title,
+            productType: item.node.product.productType,
+            vendor: item.node.product.vendor
+          } : null
+        }))
+      };
+    });
 
     const totalRevenue = orders.reduce((sum, order) => {
       return sum + parseFloat(order.total.replace('$', ''));
@@ -174,54 +220,7 @@ export const syncOrders = async (req, res) => {
         variables: { first: 50 }
       });
 
-      ordersToSend = response.data.orders.edges.map(edge => ({
-        // Order data
-        orderId: edge.node.id,
-        orderName: edge.node.name,
-        email: edge.node.email,
-        totalPrice: edge.node.totalPrice,
-        subtotalPrice: edge.node.subtotalPrice,
-        totalTax: edge.node.totalTax,
-        totalShipping: edge.node.totalShipping,
-        currencyCode: edge.node.currencyCode,
-        fulfillmentStatus: edge.node.fulfillmentStatus,
-        financialStatus: edge.node.financialStatus,
-        processedAt: edge.node.processedAt,
-        createdAt: edge.node.createdAt,
-        updatedAt: edge.node.updatedAt,
-        
-        // Customer data
-        customer: edge.node.customer ? {
-          id: edge.node.customer.id,
-          firstName: edge.node.customer.firstName,
-          lastName: edge.node.customer.lastName,
-          email: edge.node.customer.email,
-          phone: edge.node.customer.phone
-        } : null,
-        
-        // Addresses
-        shippingAddress: edge.node.shippingAddress,
-        billingAddress: edge.node.billingAddress,
-        
-        // Line items
-        lineItems: edge.node.lineItems.edges.map(item => ({
-          id: item.node.id,
-          title: item.node.title,
-          quantity: item.node.quantity,
-          variant: item.node.variant ? {
-            id: item.node.variant.id,
-            title: item.node.variant.title,
-            sku: item.node.variant.sku,
-            price: item.node.variant.price
-          } : null,
-          product: item.node.product ? {
-            id: item.node.product.id,
-            title: item.node.product.title,
-            productType: item.node.product.productType,
-            vendor: item.node.product.vendor
-          } : null
-        }))
-      }));
+      ordersToSend = response.data.orders.edges.map(edge => edge.node);
     } else if (sendMode === "selected" && selectedOrderIds && selectedOrderIds.length > 0) {
       // Get selected orders by IDs
       const orderIds = selectedOrderIds.map(id => `"${id}"`).join(',');
@@ -302,56 +301,7 @@ export const syncOrders = async (req, res) => {
         variables: { ids: selectedOrderIds }
       });
 
-      ordersToSend = response.data.nodes
-        .filter(node => node !== null)
-        .map(node => ({
-          // Order data
-          orderId: node.id,
-          orderName: node.name,
-          email: node.email,
-          totalPrice: node.totalPrice,
-          subtotalPrice: node.subtotalPrice,
-          totalTax: node.totalTax,
-          totalShipping: node.totalShipping,
-          currencyCode: node.currencyCode,
-          fulfillmentStatus: node.fulfillmentStatus,
-          financialStatus: node.financialStatus,
-          processedAt: node.processedAt,
-          createdAt: node.createdAt,
-          updatedAt: node.updatedAt,
-          
-          // Customer data
-          customer: node.customer ? {
-            id: node.customer.id,
-            firstName: node.customer.firstName,
-            lastName: node.customer.lastName,
-            email: node.customer.email,
-            phone: node.customer.phone
-          } : null,
-          
-          // Addresses
-          shippingAddress: node.shippingAddress,
-          billingAddress: node.billingAddress,
-          
-          // Line items
-          lineItems: node.lineItems.edges.map(item => ({
-            id: item.node.id,
-            title: item.node.title,
-            quantity: item.node.quantity,
-            variant: item.node.variant ? {
-              id: item.node.variant.id,
-              title: item.node.variant.title,
-              sku: item.node.variant.sku,
-              price: item.node.variant.price
-            } : null,
-            product: item.node.product ? {
-              id: item.node.product.id,
-              title: item.node.product.title,
-              productType: item.node.product.productType,
-              vendor: item.node.product.vendor
-            } : null
-          }))
-        }));
+      ordersToSend = response.data.nodes.filter(node => node !== null);
     } else {
       return res.status(400).json({
         success: false,

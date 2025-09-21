@@ -23,65 +23,17 @@ export default {
         // This is where we send the order data TO your external system (e.g., Odoo, ERP)
         const externalEndpoint = ORDER_SYNC_ENDPOINT;
         
-        // Transform order data to match our sync format
-        const transformedOrder = {
-          // Order data
-          orderId: orderData.id,
-          orderName: orderData.name,
-          email: orderData.email,
-          totalPrice: orderData.total_price,
-          subtotalPrice: orderData.subtotal_price,
-          totalTax: orderData.total_tax,
-          totalShipping: orderData.total_shipping_price_set?.shop_money?.amount || '0',
-          currencyCode: orderData.currency,
-          fulfillmentStatus: orderData.fulfillment_status,
-          financialStatus: orderData.financial_status,
-          processedAt: orderData.processed_at,
-          createdAt: orderData.created_at,
-          updatedAt: orderData.updated_at,
-          
-          // Customer data
-          customer: orderData.customer ? {
-            id: orderData.customer.id,
-            firstName: orderData.customer.first_name,
-            lastName: orderData.customer.last_name,
-            email: orderData.customer.email,
-            phone: orderData.customer.phone
-          } : null,
-          
-          // Addresses
-          shippingAddress: orderData.shipping_address,
-          billingAddress: orderData.billing_address,
-          
-          // Line items
-          lineItems: orderData.line_items?.map(item => ({
-            id: item.id,
-            title: item.title,
-            quantity: item.quantity,
-            variant: item.variant_id ? {
-              id: `gid://shopify/ProductVariant/${item.variant_id}`,
-              title: item.variant_title,
-              sku: item.sku,
-              price: item.price
-            } : null,
-            product: item.product_id ? {
-              id: `gid://shopify/Product/${item.product_id}`,
-              title: item.product_title || item.title,
-              productType: item.product_type,
-              vendor: item.vendor
-            } : null
-          })) || []
-        };
-
+        // Send order data as-is without transformation
+        
         // Send to external API
         const payload = {
           dryRun: false,
           limit: 1,
           skipExisting: false,
           updateExisting: true,
-          orders: [transformedOrder],
-          data: [transformedOrder],
-          orderData: [transformedOrder],
+          orders: [orderData],
+          data: [orderData],
+          orderData: [orderData],
           timestamp: new Date().toISOString(),
           source: 'shopify-webhook',
           shopDomain: shop,
@@ -134,65 +86,17 @@ export default {
         // This is where we send the order data TO your external system (e.g., Odoo, ERP)
         const externalEndpoint = ORDER_SYNC_ENDPOINT;
         
-        // Transform order data to match our sync format
-        const transformedOrder = {
-          // Order data
-          orderId: orderData.id,
-          orderName: orderData.name,
-          email: orderData.email,
-          totalPrice: orderData.total_price,
-          subtotalPrice: orderData.subtotal_price,
-          totalTax: orderData.total_tax,
-          totalShipping: orderData.total_shipping_price_set?.shop_money?.amount || '0',
-          currencyCode: orderData.currency,
-          fulfillmentStatus: orderData.fulfillment_status,
-          financialStatus: orderData.financial_status,
-          processedAt: orderData.processed_at,
-          createdAt: orderData.created_at,
-          updatedAt: orderData.updated_at,
-          
-          // Customer data
-          customer: orderData.customer ? {
-            id: orderData.customer.id,
-            firstName: orderData.customer.first_name,
-            lastName: orderData.customer.last_name,
-            email: orderData.customer.email,
-            phone: orderData.customer.phone
-          } : null,
-          
-          // Addresses
-          shippingAddress: orderData.shipping_address,
-          billingAddress: orderData.billing_address,
-          
-          // Line items
-          lineItems: orderData.line_items?.map(item => ({
-            id: item.id,
-            title: item.title,
-            quantity: item.quantity,
-            variant: item.variant_id ? {
-              id: `gid://shopify/ProductVariant/${item.variant_id}`,
-              title: item.variant_title,
-              sku: item.sku,
-              price: item.price
-            } : null,
-            product: item.product_id ? {
-              id: `gid://shopify/Product/${item.product_id}`,
-              title: item.product_title || item.title,
-              productType: item.product_type,
-              vendor: item.vendor
-            } : null
-          })) || []
-        };
-
+        // Send order data as-is without transformation
+        
         // Send to external API
         const payload = {
           dryRun: false,
           limit: 1,
           skipExisting: false,
           updateExisting: true,
-          orders: [transformedOrder],
-          data: [transformedOrder],
-          orderData: [transformedOrder],
+          orders: [orderData],
+          data: [orderData],
+          orderData: [orderData],
           timestamp: new Date().toISOString(),
           source: 'shopify-webhook',
           shopDomain: shop,
