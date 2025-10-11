@@ -23,7 +23,7 @@ import {
   InlineStack,
   BlockStack,
 } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
+import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { useTranslation } from "react-i18next";
 import { useState, useCallback, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
@@ -32,13 +32,14 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 function ProductSender() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const shopify = useAppBridge();
   const [sendModalActive, setSendModalActive] = useState(false);
   const [sendInProgress, setSendInProgress] = useState(false);
   const [sendResults, setSendResults] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [sendMode, setSendMode] = useState("all"); // "all" or "selected"
-  const [skuLoading, setSkuLoading] = useState(false);
-  const [skuData, setSkuData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   // Get Shopify variants (API now returns variants directly)
   const { data: shopifyData, isLoading: productsLoading } = useQuery({
@@ -56,110 +57,229 @@ function ProductSender() {
   // Send products mutation
   const sendProductsMutation = useMutation({
     mutationFn: async ({ endpoint, sendMode, selectedProductIds }) => {
-      // First, get the products data from our backend
-      const productsResponse = await fetch("/api/products", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      
-      if (!productsResponse.ok) {
-        throw new Error(`Failed to fetch products: ${productsResponse.status}`);
-      }
-      
-      const productsData = await productsResponse.json();
-      const allVariants = productsData.products || []; // These are actually variants with product context
-      
-      console.log('Fetched variants:', allVariants.length);
-      console.log('Sample variant:', allVariants[0]);
-      
-      // Filter variants based on sendMode
-      let variantsToSend = [];
-      if (sendMode === "all") {
-        variantsToSend = allVariants;
-      } else if (sendMode === "selected" && selectedProductIds && selectedProductIds.length > 0) {
-        variantsToSend = allVariants.filter(variant => selectedProductIds.includes(variant.id));
-      }
-      
-      console.log('Variants to send:', variantsToSend.length);
-      
-      // Transform variants to match external API format (flat array of variants with product context)
-      const transformedProducts = variantsToSend.map(variant => ({
-        variantId: variant.id,
-        productId: variant.productId,
-        productTitle: variant.productTitle,
-        variantTitle: variant.title,
-        sku: variant.sku,
-        price: variant.price,
-        inventoryQuantity: variant.inventoryQuantity,
-        productCategory: variant.productCategory,
-        productVendor: variant.productVendor,
-        productStatus: variant.productStatus,
-        productDescription: variant.productDescription,
-        productImage: variant.productImage,
-        productCreatedAt: variant.productCreatedAt,
-        productUpdatedAt: variant.productUpdatedAt
-      }));
-      
-      console.log('Transformed products (variants):', transformedProducts.length);
-      console.log('Sample variant:', transformedProducts[0]);
-      
-      // Get shop domain from URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const shopDomain = urlParams.get('shop') || urlParams.get('shop_domain') || 'unknown-shop.myshopify.com';
-      
-      console.log('Shop domain:', shopDomain);
-      console.log('Current URL:', window.location.href);
-      
-      // Now send to external API with complete data
-      const response = await fetch("/api/sync/send-products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          endpoint: "EXTERNAL_API", // Use pre-configured external API
-          sendMode: sendMode,
-          selectedProductIds: sendMode === "selected" ? selectedProductIds : []
-        }),
-      });
-      
-      // Handle non-JSON responses
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        return await response.json();
-      } else {
-        const text = await response.text();
-        throw new Error(`Server error: ${response.status} ${response.statusText} - ${text}`);
+      try {
+        // First, get the products data from our backend
+        const productsResponse = await fetch("/api/products", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (!productsResponse.ok) {
+          const errorText = await productsResponse.text();
+          throw new Error(`Failed to fetch products: ${productsResponse.status} - ${errorText}`);
+        }
+        
+        const productsData = await productsResponse.json();
+        const allVariants = productsData.products || []; // These are actually variants with product context
+        
+        console.log('Fetched variants:', allVariants.length);
+        console.log('Sample variant:', allVariants[0]);
+        
+        // Filter variants based on sendMode
+        let variantsToSend = [];
+        if (sendMode === "all") {
+          variantsToSend = allVariants;
+        } else if (sendMode === "selected" && selectedProductIds && selectedProductIds.length > 0) {
+          variantsToSend = allVariants.filter(variant => selectedProductIds.includes(variant.id));
+        }
+        
+        console.log('Variants to send:', variantsToSend.length);
+        
+        // Transform variants to match external API format (flat array of variants with product context)
+        const transformedProducts = variantsToSend.map(variant => ({
+          variantId: variant.id,
+          productId: variant.productId,
+          productTitle: variant.productTitle,
+          variantTitle: variant.title,
+          sku: variant.sku,
+          price: variant.price,
+          inventoryQuantity: variant.inventoryQuantity,
+          productCategory: variant.productCategory,
+          productVendor: variant.productVendor,
+          productStatus: variant.productStatus,
+          productDescription: variant.productDescription,
+          productImage: variant.productImage,
+          productCreatedAt: variant.productCreatedAt,
+          productUpdatedAt: variant.productUpdatedAt
+        }));
+        
+        console.log('Transformed products (variants):', transformedProducts.length);
+        console.log('Sample variant:', transformedProducts[0]);
+        
+        // Get shop domain from URL parameters or current hostname
+        const urlParams = new URLSearchParams(window.location.search);
+        let shopDomain = urlParams.get('shop') || urlParams.get('shop_domain');
+        
+        // If not in URL params, try to extract from current hostname or referrer
+        if (!shopDomain) {
+          // Try to get from current URL hostname
+          const hostname = window.location.hostname;
+          if (hostname.includes('myshopify.com')) {
+            shopDomain = hostname;
+          } else {
+            // Try to get from document referrer
+            const referrer = document.referrer;
+            if (referrer) {
+              try {
+                const referrerUrl = new URL(referrer);
+                if (referrerUrl.hostname.includes('myshopify.com')) {
+                  shopDomain = referrerUrl.hostname;
+                }
+              } catch (e) {
+                console.warn('Could not parse referrer URL:', referrer);
+              }
+            }
+          }
+        }
+        
+        // Fallback to a default shop domain if still not found
+        if (!shopDomain) {
+          shopDomain = 'test-warehouse-app1.myshopify.com'; // Default fallback
+          console.warn('No shop domain found, using fallback:', shopDomain);
+        }
+        
+        console.log('Shop domain:', shopDomain);
+        console.log('Current URL:', window.location.href);
+        console.log('URL params:', Object.fromEntries(urlParams.entries()));
+        
+        // Now send to external API with complete data
+        const response = await fetch(`/api/shopify/sync/products?shop=${encodeURIComponent(shopDomain)}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            endpoint: "EXTERNAL_API", // Use pre-configured external API
+            sendMode: sendMode,
+            selectedProductIds: sendMode === "selected" ? selectedProductIds : [],
+            shopDomain: shopDomain,
+            products: transformedProducts
+          }),
+        });
+        
+        // Handle response
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Send failed: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        
+        // Handle JSON responses
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          return data;
+        } else {
+          const text = await response.text();
+          return { 
+            success: true, 
+            message: text || "Products sent successfully",
+            sent: variantsToSend.length,
+            successCount: variantsToSend.length,
+            errorCount: 0
+          };
+        }
+      } catch (error) {
+        console.error("Send mutation error:", error);
+        throw error;
       }
     },
     onSuccess: (data) => {
+      console.log("Send success:", data);
       setSendResults(data);
       setSendInProgress(false);
       setSendModalActive(false);
+      setErrorMessage(null);
+      
+      // Show success toast
+      const successCount = data.successCount || data.sent || 0;
+      const errorCount = data.errorCount || 0;
+      const totalSent = data.sent || 0;
+      
+      if (errorCount === 0) {
+        setSuccessMessage(`Successfully sent ${successCount} product(s) to Flowline!`);
+        shopify.toast.show(`Successfully sent ${successCount} product(s) to Flowline!`, {
+          isError: false,
+        });
+      } else {
+        setSuccessMessage(`Sent ${successCount} product(s) successfully, ${errorCount} failed.`);
+        shopify.toast.show(`Sent ${successCount} product(s) successfully, ${errorCount} failed.`, {
+          isError: false,
+        });
+      }
     },
     onError: (error) => {
       console.error("Send error:", error);
       setSendInProgress(false);
-      // Show error message to user
-      alert(`Sync failed: ${error.message}`);
+      setSuccessMessage(null);
+      
+      // Parse error message for better user feedback
+      let errorMsg = "Failed to send products to Flowline.";
+      if (error.message) {
+        if (error.message.includes("Failed to fetch products")) {
+          errorMsg = "Failed to load products from Shopify. Please try again.";
+        } else if (error.message.includes("Send failed")) {
+          errorMsg = "Failed to send products to Flowline. Please check your connection and try again.";
+        } else {
+          errorMsg = error.message;
+        }
+      }
+      
+      setErrorMessage(errorMsg);
+      shopify.toast.show(errorMsg, {
+        isError: true,
+      });
     },
   });
 
   const handleSendAll = useCallback(() => {
-    setSendMode("all");
-    setSendModalActive(true);
-  }, []);
-
-  const handleSendSelected = useCallback(() => {
-    if (selectedProducts.length === 0) {
-      alert("Please select at least one product to send.");
+    // Clear previous messages
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setSendResults(null);
+    
+    // Check if any variants have no SKU
+    const variantsWithoutSku = shopifyVariants?.filter(variant => !variant.sku || variant.sku.trim() === '');
+    
+    if (variantsWithoutSku && variantsWithoutSku.length > 0) {
+      const errorMsg = `Cannot send products without SKU. Please add SKUs to ${variantsWithoutSku.length} product(s) before sending.`;
+      setErrorMessage(errorMsg);
+      shopify.toast.show(errorMsg, { isError: true });
       return;
     }
+    
+    setSendMode("all");
+    setSendModalActive(true);
+  }, [shopifyVariants]);
+
+  const handleSendSelected = useCallback(() => {
+    // Clear previous messages
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setSendResults(null);
+    
+    if (selectedProducts.length === 0) {
+      const errorMsg = "Please select at least one product to send.";
+      setErrorMessage(errorMsg);
+      shopify.toast.show(errorMsg, { isError: true });
+      return;
+    }
+    
+    // Check if any selected variants have no SKU
+    const selectedVariants = shopifyVariants?.filter(variant => selectedProducts.includes(variant.id));
+    const variantsWithoutSku = selectedVariants?.filter(variant => !variant.sku || variant.sku.trim() === '');
+    
+    if (variantsWithoutSku && variantsWithoutSku.length > 0) {
+      const errorMsg = `Cannot send selected products without SKU. Please add SKUs to ${variantsWithoutSku.length} selected product(s) before sending.`;
+      setErrorMessage(errorMsg);
+      shopify.toast.show(errorMsg, { isError: true });
+      return;
+    }
+    
     setSendMode("selected");
     setSendModalActive(true);
-  }, [selectedProducts]);
+  }, [selectedProducts, shopifyVariants]);
 
   const handleConfirmSend = useCallback(() => {
     setSendInProgress(true);
@@ -184,27 +304,13 @@ function ProductSender() {
   }, [selectedProducts.length, shopifyVariants]);
 
 
-  const handleFetchSkus = useCallback(async () => {
-    setSkuLoading(true);
-    try {
-      const response = await fetch('/api/skus/quantities');
-      const data = await response.json();
-      
-      if (data.success) {
-        setSkuData(data);
-        console.log('SKU data fetched:', data);
-      } else {
-        console.error('Failed to fetch SKU data:', data.message);
-      }
-    } catch (error) {
-      console.error('Error fetching SKU data:', error);
-    } finally {
-      setSkuLoading(false);
-    }
-  }, []);
 
   const allSelected = selectedProducts.length === shopifyVariants?.length && shopifyVariants?.length > 0;
   const someSelected = selectedProducts.length > 0 && selectedProducts.length < shopifyVariants?.length;
+  
+  // Check for variants without SKU
+  const variantsWithoutSku = shopifyVariants?.filter(variant => !variant.sku || variant.sku.trim() === '') || [];
+  const hasVariantsWithoutSku = variantsWithoutSku.length > 0;
 
 
 
@@ -214,169 +320,54 @@ function ProductSender() {
         <TitleBar title="Warehouse Management" />
         <Layout>
         {/* Header */}
-        <Layout.Section>
-          <Card>
-            <BlockStack gap="400">
-              <InlineStack align="space-between" blockAlign="center">
-                <BlockStack gap="200">
-                  <Text variant="headingLg" as="h1">Warehouse Management Dashboard</Text>
-                  <Text variant="bodyMd" color="subdued">
-                    Sync your Shopify product variants to Odoo warehouse management system
-                  </Text>
-                </BlockStack>
-                <Button 
-                  onClick={handleFetchSkus} 
-                  loading={skuLoading}
-                  variant="primary"
-                  size="large"
-                >
-                  {skuLoading ? 'Fetching SKUs...' : 'Fetch SKU Quantities'}
-                </Button>
-              </InlineStack>
-            </BlockStack>
-          </Card>
-        </Layout.Section>
 
-        {/* SKU Data Display */}
-        {skuData && (
+        {/* Success/Error Messages */}
+        {successMessage && (
           <Layout.Section>
-            <Card>
-              <BlockStack gap="400">
-                <Text variant="headingMd" as="h2">SKU Quantities Data</Text>
-                <Banner status="success" title={skuData.message}>
-                  <Text variant="bodyMd">
-                    Retrieved data for {skuData.data.length} companies
-                  </Text>
-                </Banner>
-                
-                <Grid>
-                  {skuData.data.map((company, index) => (
-                    <Grid.Cell key={index} columnSpan={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
-                      <Card>
-                        <BlockStack gap="300">
-                          <InlineStack align="space-between" blockAlign="start">
-                            <BlockStack gap="100">
-                              <Text variant="headingMd">
-                                {company.company_name}
-                              </Text>
-                              <Text variant="bodyMd" color="subdued">
-                                {company.company_website}
-                              </Text>
-                            </BlockStack>
-                            <Badge status="info">
-                              {company.total_skus} SKUs
-                            </Badge>
-                          </InlineStack>
-                          
-                          <InlineStack gap="400">
-                            <Text variant="bodyMd" fontWeight="semibold">
-                              Total Quantity: {company.total_quantity}
-                            </Text>
-                          </InlineStack>
-                          
-                          <Box>
-                            <Text variant="bodySm" fontWeight="semibold">SKU Details:</Text>
-                            <BlockStack gap="100">
-                              {company.skus.slice(0, 3).map((sku, skuIndex) => (
-                                <Text key={skuIndex} variant="bodySm">
-                                  • {sku.sku}: {sku.quantity_on_hand} units
-                                </Text>
-                              ))}
-                              {company.skus.length > 3 && (
-                                <Text variant="bodySm" color="subdued">
-                                  ... and {company.skus.length - 3} more
-                                </Text>
-                              )}
-                            </BlockStack>
-                          </Box>
-                        </BlockStack>
-                      </Card>
-                    </Grid.Cell>
-                  ))}
-                </Grid>
-              </BlockStack>
-            </Card>
+            <Banner status="success" title="Success" onDismiss={() => setSuccessMessage(null)}>
+              <Text variant="bodyMd">{successMessage}</Text>
+            </Banner>
           </Layout.Section>
         )}
 
-        {/* Variant Count */}
-        <Layout.Section>
-          <Grid>
-            <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}>
-              <Card>
-                <BlockStack gap="200">
-                  <Text variant="headingMd" as="h3">
-                    Total Variants
-                  </Text>
-                  {productsLoading ? (
-                    <SkeletonDisplayText size="large" />
-                  ) : (
-                    <Text variant="heading2xl" as="p">
-                      {shopifyVariants?.length || 0}
-                    </Text>
-                  )}
-                  <Text variant="bodyMd" color="subdued">
-                    Available in your store
-                  </Text>
-                </BlockStack>
-              </Card>
-            </Grid.Cell>
-            <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}>
-              <Card>
-                <BlockStack gap="200">
-                  <Text variant="headingMd" as="h3">
-                    Selected Variants
-                  </Text>
-                  <Text variant="heading2xl" as="p">
-                    {selectedProducts.length}
-                  </Text>
-                  <Text variant="bodyMd" color="subdued">
-                    Ready to send
-                  </Text>
-                </BlockStack>
-              </Card>
-            </Grid.Cell>
-            <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}>
-              <Card>
-                <BlockStack gap="200">
-                  <Text variant="headingMd" as="h3">
-                    Send Status
-                  </Text>
-                  <InlineStack gap="200" blockAlign="center">
-                    <Text variant="heading2xl" as="p">
-                      {sendInProgress ? "⏳" : sendResults ? "✅" : "📤"}
-                    </Text>
-                    <Badge status={sendInProgress ? "info" : sendResults ? "success" : "attention"}>
-                      {sendInProgress ? "Sending..." : sendResults ? "Sent" : "Ready"}
-                    </Badge>
-                  </InlineStack>
-                </BlockStack>
-              </Card>
-            </Grid.Cell>
-          </Grid>
-        </Layout.Section>
+        {errorMessage && (
+          <Layout.Section>
+            <Banner status="critical" title="Error" onDismiss={() => setErrorMessage(null)}>
+              <Text variant="bodyMd">{errorMessage}</Text>
+            </Banner>
+          </Layout.Section>
+        )}
 
         {/* Send Actions */}
         <Layout.Section>
           <Card>
             <BlockStack gap="400">
               <BlockStack gap="200">
-                <Text variant="headingMd" as="h2">Sync Variants to Odoo</Text>
+                <Text variant="headingMd" as="h2">Send Products to Flowline</Text>
                 <Text variant="bodyMd">
-                  Choose to sync all variants or select specific ones to sync to Odoo warehouse management.
+                  Choose to send all products or select specific ones to send to Flowline.
                 </Text>
               </BlockStack>
               
               <BlockStack gap="300">
+                {hasVariantsWithoutSku && (
+                  <Banner status="warning" title="SKU Required">
+                    <Text variant="bodyMd">
+                      {variantsWithoutSku.length} product(s) are missing SKUs and cannot be sent. 
+                      Please add SKUs to these products before sending.
+                    </Text>
+                  </Banner>
+                )}
+                
                 <InlineStack gap="300" wrap={false}>
                   <Button 
                     variant="primary" 
                     size="large"
                     onClick={handleSendAll}
-                    disabled={sendInProgress || !shopifyVariants?.length}
+                    disabled={sendInProgress || !shopifyVariants?.length || hasVariantsWithoutSku}
                     loading={sendInProgress && sendMode === "all"}
                   >
-                    {sendInProgress && sendMode === "all" ? "Syncing..." : "Sync All Variants"}
+                    {sendInProgress && sendMode === "all" ? "Sending..." : "Send All Products"}
                   </Button>
                   <Button 
                     variant="secondary"
@@ -385,13 +376,13 @@ function ProductSender() {
                     disabled={sendInProgress || selectedProducts.length === 0}
                     loading={sendInProgress && sendMode === "selected"}
                   >
-                    Sync Selected ({selectedProducts.length})
+                    Send Selected ({selectedProducts.length})
                   </Button>
                 </InlineStack>
 
                 {sendInProgress && (
                   <BlockStack gap="200">
-                    <Text variant="bodyMd">Syncing variants to Odoo...</Text>
+                    <Text variant="bodyMd">Sending products to Flowline...</Text>
                     <ProgressBar progress={75} />
                   </BlockStack>
                 )}
@@ -400,23 +391,83 @@ function ProductSender() {
           </Card>
         </Layout.Section>
 
-        {/* Variant List */}
+        {/* Send Results */}
+        {sendResults && (
+          <Layout.Section>
+            <Card>
+              <BlockStack gap="400">
+                <Text variant="headingMd" as="h2">Send Results</Text>
+                <Grid>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}>
+                    <Box padding="300">
+                      <BlockStack gap="100">
+                        <Text variant="bodyMd" fontWeight="semibold">Products Sent</Text>
+                        <Text variant="heading2xl">{sendResults.sent || sendResults.successCount || 0}</Text>
+                      </BlockStack>
+                    </Box>
+                  </Grid.Cell>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}>
+                    <Box padding="300">
+                      <BlockStack gap="100">
+                        <Text variant="bodyMd" fontWeight="semibold">Successful</Text>
+                        <Text variant="heading2xl" color="success">{sendResults.successCount || sendResults.sent || 0}</Text>
+                      </BlockStack>
+                    </Box>
+                  </Grid.Cell>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}>
+                    <Box padding="300">
+                      <BlockStack gap="100">
+                        <Text variant="bodyMd" fontWeight="semibold">Errors</Text>
+                        <Text variant="heading2xl" color="critical">{sendResults.errorCount || 0}</Text>
+                      </BlockStack>
+                    </Box>
+                  </Grid.Cell>
+                </Grid>
+                
+                {sendResults.message && (
+                  <Box padding="200" background="bg-surface-secondary">
+                    <Text variant="bodyMd" fontWeight="semibold">
+                      Message: {sendResults.message}
+                    </Text>
+                  </Box>
+                )}
+                
+                {sendResults.errorDetails && sendResults.errorDetails.length > 0 && (
+                  <Box>
+                    <Text variant="bodyMd" color="critical" fontWeight="semibold">
+                      Error Details:
+                    </Text>
+                    <List type="bullet">
+                      {sendResults.errorDetails.map((error, index) => (
+                        <List.Item key={index}>
+                          {error.product}: {error.error}
+                        </List.Item>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+              </BlockStack>
+            </Card>
+          </Layout.Section>
+        )}
+
+        {/* Product List */}
         <Layout.Section>
           <Card>
             <BlockStack gap="400">
-              <Text variant="headingMd" as="h2">Product Variants</Text>
+              <Text variant="headingMd" as="h2">Products</Text>
               
               {productsLoading ? (
                 <Box padding="400">
                   <InlineStack align="center" blockAlign="center">
-                    <Spinner accessibilityLabel="Loading variants" size="large" />
-                    <Text variant="bodyMd">Loading variants...</Text>
+                    <Spinner accessibilityLabel="Loading products" size="large" />
+                    <Text variant="bodyMd">Loading products...</Text>
                   </InlineStack>
                 </Box>
               ) : shopifyVariants?.length > 0 ? (
                 <Box padding="0">
                   <DataTable
-                    columnContentTypes={['text', 'text', 'numeric', 'numeric', 'text']}
+                    columnContentTypes={['text', 'text', 'text']}
                     headings={[
                       <InlineStack gap="200" blockAlign="center">
                         <Checkbox
@@ -426,8 +477,6 @@ function ProductSender() {
                         <Text variant="bodyMd" fontWeight="semibold">Name</Text>
                       </InlineStack>,
                       <Text variant="bodyMd" fontWeight="semibold">SKU</Text>, 
-                      <Text variant="bodyMd" fontWeight="semibold">Stock</Text>, 
-                      <Text variant="bodyMd" fontWeight="semibold">Price</Text>, 
                       <Text variant="bodyMd" fontWeight="semibold">Status</Text>
                     ]}
                     rows={shopifyVariants.map((variant, index) => [
@@ -444,9 +493,9 @@ function ProductSender() {
                         />
                         <Text variant="bodyMd">{`${variant.productTitle} - ${variant.title}`}</Text>
                       </InlineStack>,
-                      <Text variant="bodyMd">{variant.sku || 'No SKU'}</Text>,
-                      <Text variant="bodyMd" fontWeight="semibold">{variant.inventoryQuantity || 0}</Text>,
-                      <Text variant="bodyMd" fontWeight="semibold">{`$${variant.price || "0.00"}`}</Text>,
+                      <Text variant="bodyMd" color={!variant.sku || variant.sku.trim() === '' ? 'critical' : 'base'}>
+                        {variant.sku || 'No SKU'}
+                      </Text>,
                       <Badge status={variant.productStatus === "active" ? "success" : "warning"}>
                         {variant.productStatus}
                       </Badge>
@@ -455,7 +504,7 @@ function ProductSender() {
                       <Box padding="400">
                         <InlineStack align="space-between" blockAlign="center">
                           <Text variant="bodyMd" color="subdued">
-                            {selectedProducts.length} of {shopifyVariants.length} variants selected
+                            {selectedProducts.length} of {shopifyVariants.length} products selected
                           </Text>
                           <Button 
                             onClick={handleSelectAll} 
@@ -475,76 +524,25 @@ function ProductSender() {
                 </Box>
               ) : (
                 <EmptyState
-                  heading="No variants found"
+                  heading="No products found"
                   image="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
                 >
-                  <p>No variants are available in your store.</p>
+                  <p>No products are available in your store.</p>
                 </EmptyState>
               )}
             </BlockStack>
           </Card>
         </Layout.Section>
 
-        {/* Send Results */}
-        {sendResults && (
-          <Layout.Section>
-            <Card>
-              <BlockStack gap="400">
-                <Text variant="headingMd" as="h2">Sync Results</Text>
-                <Grid>
-                  <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}>
-                    <Box padding="300">
-                      <BlockStack gap="100">
-                        <Text variant="bodyMd" fontWeight="semibold">Variants Sent</Text>
-                        <Text variant="heading2xl">{sendResults.results?.sent || 0}</Text>
-                      </BlockStack>
-                    </Box>
-                  </Grid.Cell>
-                  <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}>
-                    <Box padding="300">
-                      <BlockStack gap="100">
-                        <Text variant="bodyMd" fontWeight="semibold">Successful</Text>
-                        <Text variant="heading2xl" color="success">{sendResults.results?.success || 0}</Text>
-                      </BlockStack>
-                    </Box>
-                  </Grid.Cell>
-                  <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}>
-                    <Box padding="300">
-                      <BlockStack gap="100">
-                        <Text variant="bodyMd" fontWeight="semibold">Errors</Text>
-                        <Text variant="heading2xl" color="critical">{sendResults.results?.errors || 0}</Text>
-                      </BlockStack>
-                    </Box>
-                  </Grid.Cell>
-                </Grid>
-                
-                {sendResults.results?.errorDetails?.length > 0 && (
-                  <Box>
-                    <Text variant="bodyMd" color="critical" fontWeight="semibold">
-                      Error Details:
-                    </Text>
-                    <List type="bullet">
-                      {sendResults.results.errorDetails.map((error, index) => (
-                        <List.Item key={index}>
-                          {error.product}: {error.error}
-                        </List.Item>
-                      ))}
-                    </List>
-                  </Box>
-                )}
-              </BlockStack>
-            </Card>
-          </Layout.Section>
-        )}
         </Layout>
 
         {/* Send Confirmation Modal */}
         <Modal
           open={sendModalActive}
           onClose={handleCancelSend}
-          title="Confirm Sync to Odoo"
+          title="Confirm Send to Flowline"
           primaryAction={{
-            content: "Sync to Odoo",
+            content: "Send to Flowline",
             onAction: handleConfirmSend,
             loading: sendInProgress,
           }}
@@ -559,15 +557,10 @@ function ProductSender() {
             <BlockStack gap="300">
               <Text variant="bodyMd">
                 {sendMode === "all" 
-                  ? `This will sync all ${shopifyVariants?.length || 0} variants to Odoo.`
-                  : `This will sync ${selectedProducts.length} selected variants to Odoo.`
+                  ? `This will send all ${shopifyVariants?.length || 0} products to Flowline.`
+                  : `This will send ${selectedProducts.length} selected products to Flowline.`
                 }
               </Text>
-              <Box padding="200" background="bg-surface-secondary">
-                <Text variant="bodyMd" fontWeight="semibold">
-                  Odoo Sync Endpoint: Pre-configured External API
-                </Text>
-              </Box>
             </BlockStack>
           </Modal.Section>
         </Modal>

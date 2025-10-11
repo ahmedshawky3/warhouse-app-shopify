@@ -16,10 +16,12 @@ dotenv.config({ path: envPath });
 console.log('Environment variables loaded:');
 console.log('EXTERNAL_API_BASE_URL:', process.env.EXTERNAL_API_BASE_URL);
 console.log('SHOPIFY_API_KEY:', process.env.SHOPIFY_API_KEY);
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Set' : 'Not set (using default)');
 
 import shopify from "./shopify.js";
 import PrivacyWebhookHandlers from "./privacy.js";
 import apiRoutes from "./routes/index.js";
+import { connectDB } from "./config/database.js";
 
 // Import configuration
 import { PORT, STATIC_PATH } from "./config/constants.js";
@@ -30,6 +32,11 @@ import { configureStaticFiles } from "./middleware/static.js";
 import { requestLogger, appLogger } from "./utils/logger.js";
 
 const app = express();
+
+// Connect to MongoDB
+connectDB().catch((error) => {
+  appLogger.error('Failed to connect to MongoDB:', error);
+});
 
 // Add request logging middleware
 app.use(requestLogger);
@@ -61,19 +68,25 @@ app.get("/api/webhook-test", (req, res) => {
   });
 });
 
-// Apply rate limiting to all API routes
-app.use("/api/*", rateLimiter);
-
-// Apply authentication middleware to all API routes
-app.use("/api/*", shopify.validateAuthenticatedSession());
-
 // Set security headers
 app.use(setSecurityHeaders);
 
 // Parse JSON bodies
 app.use(express.json());
 
-// Mount API routes
+// Apply rate limiting to all API routes
+app.use("/api/*", rateLimiter);
+
+// Apply authentication middleware to all API routes EXCEPT /api/tokens
+app.use("/api/*", (req, res, next) => {
+  // Skip authentication for token routes
+  if (req.path.startsWith('/tokens')) {
+    return next();
+  }
+  return shopify.validateAuthenticatedSession()(req, res, next);
+});
+
+// Mount API routes (token routes will bypass auth due to middleware above)
 app.use("/api", apiRoutes);
 
 // Configure CSP headers for development

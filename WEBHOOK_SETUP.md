@@ -13,8 +13,8 @@ Your Shopify app has two different URLs that serve different purposes:
 
 ### 2. **External API URL** (Your External System)
 
-- **Purpose**: Where your app sends data TO your external system (e.g., Odoo, ERP, etc.)
-- **Example**: `https://your-odoo-system.com` or `https://your-erp-system.com`
+- **Purpose**: Where your app sends data TO your external system (e.g., database, ERP, etc.)
+- **Example**: `https://your-database-system.com` or `https://your-erp-system.com`
 - **Usage**: After receiving webhooks, your app processes the data and sends it to your external system
 - **Source**: Environment variable `EXTERNAL_API_BASE_URL`
 
@@ -35,7 +35,7 @@ Create a `.env` file in your project root:
 # Your Shopify app credentials
 SHOPIFY_API_KEY=2df1fafd21532086bcd358302ec7ea1f
 
-# Your external system URL (e.g., Odoo, ERP, etc.) - NOT your Shopify app URL
+# Your external system URL (e.g., database, ERP, etc.) - NOT your Shopify app URL
 EXTERNAL_API_BASE_URL=https://your-external-system.com
 ```
 

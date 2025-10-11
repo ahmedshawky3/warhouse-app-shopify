@@ -1,7 +1,7 @@
 import { BillingInterval, LATEST_API_VERSION } from "@shopify/shopify-api";
 import { shopifyApp } from "@shopify/shopify-app-express";
 import { SQLiteSessionStorage } from "@shopify/shopify-app-session-storage-sqlite";
-import { restResources } from "@shopify/shopify-api/rest/admin/2024-10";
+import { restResources } from "@shopify/shopify-api/rest/admin/2025-07";
 
 const DB_PATH = `${process.cwd()}/database.sqlite`;
 
@@ -15,10 +15,9 @@ const billingConfig = {
     interval: BillingInterval.OneTime,
   },
 };
-
 const shopify = shopifyApp({
   api: {
-    apiVersion: LATEST_API_VERSION,
+    apiVersion: "2025-07",
     restResources,
     future: {
       customerAddressDefaultFix: true,

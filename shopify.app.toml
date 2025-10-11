@@ -1,0 +1,22 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "06cc3c495119c25b8a6b9a95e3ce9284"
+name = "warehouse-staging"
+application_url = "https://commons-ownership-skills-closest.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-07"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_fulfillments,read_inventory,read_locations,read_orders,read_products,read_shipping,write_assigned_fulfillment_orders,write_customers,write_fulfillments,write_inventory,write_locations,write_merchant_managed_fulfillment_orders,write_orders,write_products,write_shipping,write_third_party_fulfillment_orders"
+
+[auth]
+redirect_urls = [ 
+  "https://commons-ownership-skills-closest.trycloudflare.com/api/auth",
+  "https://commons-ownership-skills-closest.trycloudflare.com/api/auth/callback"
+]

@@ -73,6 +73,9 @@ export const registerWebhooks = async (req, res) => {
           callbackUrl: `${currentAppUrl}/api/webhooks`,
         }
       ]
+     
+      
+
     });
     
     console.log('✅ Webhooks registered successfully:', result);

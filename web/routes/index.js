@@ -1,18 +1,16 @@
 // @ts-nocheck
 import express from "express";
 import productRoutes from "./productRoutes.js";
-import orderRoutes from "./orderRoutes.js";
 import syncRoutes from "./syncRoutes.js";
-import skuRoutes from "./skuRoutes.js";
 import webhookRoutes from "./webhookRoutes.js";
+import tokenRoutes from "./tokenRoutes.js";
 
 const router = express.Router();
 
 // Mount route modules
 router.use("/products", productRoutes);
-router.use("/orders", orderRoutes);
-router.use("/sync", syncRoutes);
-router.use("/skus", skuRoutes);
+router.use("/shopify/sync", syncRoutes);
 router.use("/webhooks", webhookRoutes);
+router.use("/tokens", tokenRoutes);
 
 export default router;

@@ -1,14 +1,12 @@
 // @ts-nocheck
 import express from "express";
 import { 
-  sendProducts, 
-  externalSyncProducts 
+  sendProducts
 } from "../controllers/syncController.js";
 
 const router = express.Router();
 
 // Sync routes
-router.post("/send-products", sendProducts);
-router.post("/external/sync-products", externalSyncProducts);
+router.post("/products", sendProducts);
 
 export default router;
